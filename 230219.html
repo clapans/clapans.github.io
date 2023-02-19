@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <style>
+    .md-container {
+      width : min(775px, 90vw);
+      margin :auto;
+    }
+
+    pre {
+      border: 0.5px solid lightgray;
+      background-color:  #f7f7f7;
+      margin-top : 30px;
+      margin-bottom : 30px;
+    }
+
+    img {
+      width: 100%;
+      margin-top : 25px;
+      margin-bottom : 25px;
+    }
+
+    h2 {
+      margin-top : 30px;
+      margin-bottom : 20px;
+    }
+
+    h3 {
+      margin-top : 30px;
+      margin-bottom : 20px;
+    }
+    h4 {
+      margin-top : 30px;
+      margin-bottom : 20px;
+    }
+    h5 {
+      margin-top : 30px;
+      margin-bottom : 20px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="md-container">
+    <h2 id="-">서블릿 예제</h2>
+<p>학습목표 : 서블릿 클래스를 만들고 요청에 담긴 정보를 확인하고 응답 출력해본다.</p>
+
+<h4 id="application-">Application 클래스 설정</h4>
+
+<pre><code class="lang-java"><span class="hljs-keyword">package</span> com.example.servletTest;
+
+<span class="hljs-keyword">import</span> org.springframework.boot.SpringApplication;
+<span class="hljs-keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;
+<span class="hljs-keyword">import</span> org.springframework.boot.web.servlet.ServletComponentScan;
+
+<span class="hljs-meta">@ServletComponentScan</span>
+<span class="hljs-meta">@SpringBootApplication</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ServletTestApplication</span> {</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> main(String[] args) {
+        SpringApplication.run(ServletTestApplication.<span class="hljs-keyword">class</span>, args);
+    }
+}
+</code></pre>
+<p>@ServletComponentScan 어노테이션을 추가해준다.</p>
+<p>@ServletComponentScan이란?</p>
+<ul>
+<li>SpringBoot 환경에서 basePackages 하위</li>
+</ul>
+<p>서블릿컴포넌트(필터, 서블릿, 리스너)를 스캔해서 빈으로 등록한다.</p>
+<p>(@ComponentScan과 유사)</p>
+<ul>
+<li><p>각각 서블릿 컴포넌트들은 해당 컴포넌트마다 별도의 어노테이션이 있어야한다</p>
+<ul>
+<li><p>필터 : @WebFilter</p>
+</li>
+<li><p>서블릿 : @WebServlet</p>
+</li>
+<li><p>리스너 : @WebListener</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="servlet-">Servlet 클래스 생성</h4>
+
+<h5 id="doget-">doGet 메서드</h5>
+
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> javax.servlet.<span class="hljs-type">ServletException</span>;
+<span class="hljs-keyword">import</span> javax.servlet.annotation.<span class="hljs-type">WebServlet</span>;
+<span class="hljs-keyword">import</span> javax.servlet.http.<span class="hljs-type">HttpServlet</span>;
+<span class="hljs-keyword">import</span> javax.servlet.http.<span class="hljs-type">HttpServletRequest</span>;
+<span class="hljs-keyword">import</span> javax.servlet.http.<span class="hljs-type">HttpServletResponse</span>;
+<span class="hljs-keyword">import</span> java.io.<span class="hljs-type">IOException</span>;
+<span class="hljs-keyword">import</span> java.io.<span class="hljs-type">PrintWriter</span>;
+
+<span class="hljs-meta">@WebServlet</span>(name=<span class="hljs-string">"testServlet"</span>, urlPatterns = <span class="hljs-string">"/test"</span>)
+public <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestServlet</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">HttpServlet</span> </span>{
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">protected</span> void doGet(<span class="hljs-type">HttpServletRequest</span> request, <span class="hljs-type">HttpServletResponse</span> response) <span class="hljs-keyword">throws</span> <span class="hljs-type">ServletException</span>, <span class="hljs-type">IOException</span> {
+        <span class="hljs-type">String</span> query = request.getQueryString();
+        response.setContentType(<span class="hljs-string">"text/plain"</span>);
+        response.setCharacterEncoding(<span class="hljs-string">"utf-8"</span>);
+
+        <span class="hljs-type">PrintWriter</span> writer = response.getWriter();
+        writer.println(query);
+    }
+}
+</code></pre>
+<ul>
+<li><p>Servlet을 사용하기위해서는 HttpServlet을 상속받아야한다.</p>
+</li>
+<li><p>HttpServlet 클래스에는 Http 메소드마다 호출되는 메소드가 따로 구분되어 있다.</p>
+<p>(doGet,doPost,doPut....)</p>
+</li>
+<li><p>@WebServlet은 해당 클래스를 서블릿으로 사용할 수 있게 해주는 애노테이션</p>
+<ul>
+<li><p>name 속성으로 서블릿 이름을 지정</p>
+</li>
+<li><p>urlPattern 속성으로 서블릿에 매핑될 url을 지정해준다.</p>
+</li>
+</ul>
+</li>
+</ul>
+<br>
+<p>메소드의 매개변수 HttpServletRequest 인스턴스의 setContentType, setCharacterEncoding 메소드를 통해 출력 타입이나 인코딩을 정할 수 있다.</p>
+<p>setHeaders 메소드를 통해 아래와 같이 헤더를 추가할 수도 있다.</p>
+<pre><code class="lang-java"><span class="hljs-selector-tag">response</span><span class="hljs-selector-class">.setHeader</span>(<span class="hljs-string">"Content-Type"</span>,<span class="hljs-string">"text/plain"</span>);
+</code></pre>
+<p>request.getQueryString()을 통해 request parameter에 대한 문자열을 얻을 수 있다.</p>
+<p>&amp;까지 포함되어 나오는 듯 하다.</p>
+<br>
+<p><img src="./static/230219/getParameterTest.png" alt="getParameterTest.png"></p>
+<p>getParameter를 통해 특정 파라미터에 대한 key를 통해 value를 얻을 수 있고</p>
+<p>getParameterMap을 통해 Map 형태로 parameter들을 얻을 수 있는 것으로 보인다.</p>
+<p><img src="./static/230219/getParameterMap.png" alt="getParameterMap.png"></p>
+<h5 id="dopost-">doPost 메서드</h5>
+<p> HTTP message body는 개발자가 직접 데이터를 담아서 요청하는 방식이다. JSON, XML, TEXT가 주로 사용되는 포맷 형식인데 최근에 들어서는 거진 JSON이 사용된다.</p>
+<p>단순 텍스트를 메시지에 담아 전송할 떄는 request의 getInputStream을 통해 stream을 얻고 이를 StreamUtils의 copyToString 메서드를 통해 문자열로 변환할 수 있다.</p>
+
+<pre><code class="lang-java"><span class="hljs-attribute">ServletInputStream inputStream</span> = request.getInputStream();
+<span class="hljs-attribute">String requestBody</span> = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+</code></pre>
+
+<p>json 타입의 경우 StreamUtil 유틸 클래스로 InputStream을 읽어와서 이를 스프링부트에서 기본으로 제공하는 Jackson 이라는 json 라이브러리를 사용해서 이 값을 객체로 읽어올 수 있다.</p>
+<pre><code class="lang-java"><span class="hljs-type">ObjectMapper</span> objectMapper = <span class="hljs-function"><span class="hljs-keyword">new</span> <span class="hljs-title">ObjectMapper</span>();
+<span class="hljs-title">PrintWriter</span> <span class="hljs-title">writer</span> = <span class="hljs-title">response</span>.<span class="hljs-title">getWriter</span>();
+<span class="hljs-title">User</span> <span class="hljs-title">user</span> = <span class="hljs-title">objectMapper</span>.<span class="hljs-title">readValue</span>(requestBody,<span class="hljs-type">User</span>.class);
+<span class="hljs-title">writer</span>.<span class="hljs-title">println</span>(user.getId());
+<span class="hljs-title">writer</span>.<span class="hljs-title">println</span>(user.getPassword());</span>
+</code></pre>
+<p>User라는 DTO 클래스를 생성해 json 데이터를 자바 오브젝트로 변환하여 얻을 수 있다.</p>
+<p>postman을 이용한 결과 화면은 아래와 같다.</p>
+<p><img src="./static/230219/postman%20post%20결과.png" alt="postman post 결과.png"></p>
+
+<h4 id="html-">HTML로 출력하기</h4>
+
+<p>doGet 메서드 실험의 결과를 단순 텍스트가 아닌 html로 출력해보았다.</p>
+<pre><code class="lang-java">protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    String firstName = request.getParameter(<span class="hljs-string">"first"</span>)<span class="hljs-comment">;</span>
+    String lastName = request.getParameter(<span class="hljs-string">"last"</span>)<span class="hljs-comment">;</span>
+    response.setContentType(<span class="hljs-string">"text/html"</span>)<span class="hljs-comment">;</span>
+    response.setCharacterEncoding(<span class="hljs-string">"utf-8"</span>)<span class="hljs-comment">;</span>
+
+    PrintWriter writer = response.getWriter()<span class="hljs-comment">;</span>
+    writer.println(<span class="hljs-string">"&lt;html&gt;"</span>)<span class="hljs-comment">;</span>
+    writer.println(<span class="hljs-string">"&lt;body&gt;"</span>)<span class="hljs-comment">;</span>
+    writer.println(<span class="hljs-string">"&lt;div&gt;반갑습니다."</span> + lastName + firstName + <span class="hljs-string">"&lt;/div&gt;"</span>)<span class="hljs-comment">;</span>
+    writer.println(<span class="hljs-string">"&lt;/body&gt;"</span>)<span class="hljs-comment">;</span>
+    writer.println(<span class="hljs-string">"&lt;/html&gt;"</span>)<span class="hljs-comment">;</span>
+}
+</code></pre>
+<p><img src="./static/230219/getHtmlTest.png" alt="getHtmlTest.png"></p>
+<p>자바 코드 내에서 html 생성할 수 있어 동적으로 html을 생성할 수 있지만</p>
+<p>html 태그의 모든 내용을 개발자가 직접 출력 해줘야 한다...</p>
+<p>이러한 점을 해결하기 위해 JSP,thymeleaf와 같은 템플릿 엔진이 등장했다.</p>
+
+  </div>
+  <br>
+  <br>
+  <br>
+</body>
+</html>
