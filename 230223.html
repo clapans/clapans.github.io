@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>17837번 - 새로운 게임 2</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <style>
+    .md-container {
+      width : min(775px, 90vw);
+      margin :auto;
+    }
+
+    pre {
+      border: 0.5px solid lightgray;
+      background-color:  #f7f7f7;
+      margin-top : 30px;
+      margin-bottom : 30px;
+    }
+
+    img {
+      width: 100%;
+      margin-top : 25px;
+      margin-bottom : 25px;
+    }
+
+    h2 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+    h3 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h4 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h5 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="md-container">
+    <h2 class="fw-bold">1613번 - 역사</h2>
+<h4 id="-">분류 : 그래프 이론, 자료구조, 플로이드-워셜</h4>
+<h4 id="-">제약조건</h4>
+<ul>
+<li><p>사건의 일어나 순서에 대해 전후관계가 입력으로 주어진다.</p>
+</li>
+<li><p>이 입력들을 기반으로 s개의 a,b 사건 쌍이 주어졌을 때 사건이 발생한 순서가 a가 먼저이면 -1을 b가 먼저이면 1을 알 수 없으면 0을 출력</p>
+</li>
+</ul>
+<h4 id="-">설계</h4>
+<ol>
+<li><p>처음에는 위상 정렬을 사용하려 풀려 했지만 위상 정렬로는 임의의 두 사건이 주어졌을 때 해당 사건이 동위상인지 아닌지 판별할 방법이 없어서 기각했다.</p>
+</li>
+<li><p>두 번째로 생각한 방법은 bfs로 임의의 사건 t 마다 확실하게 t보다 위상이 뒤인 사건들을 Iterable한 자료 구조에 담아 <code>Map&lt;Integer,Iterable&lt;&gt;&gt;</code> 의 타입으로 저장하는 것을 생각했다.</p>
+<ul>
+<li>임의의 사건 k가 t를 key로 하는 Iterable 자료구조에 포함된다면 t가 k보다 먼저 발생했다는 것을 알 수 있다.</li>
+</ul>
+</li>
+<li><p>이 때 Iterable한 자료 구조 중 처음엔 List를 생각했지만 List에 element가 포함되어 있는 지 판별하는 데에는 O(n)의 시간복잡도가 소모되기 때문에 사건 쌍의 최대 개수가 50000개 인 것을 생각해보았을 때 O(1)로 접근이 가능한 Map으로 구현하였다.</p>
+<ul>
+<li>최종 bfs로 저장된 Map은 <code>Map&lt;Integer,Map&lt;Integer,Boolean&gt;&gt;</code>으로 정했다.</li>
+</ul>
+</li>
+<li>compare메서드를 구현해 int a,b가 매개변수로 들어왔을 때 a를 key로 한 <code>Map&lt;Integer,Boolean&gt;</code> 자료구조에 b가 포함되는 지 containsKey() 메서드로 판별하고 그렇다면 -1을 return b를 key로 한 <code>Map&lt;Integer,Boolean&gt;</code> 자료구조에 a가 포함된다면 1를 return 그렇지 않다면 0을 return하게 구현하였다.</li>
+</ol>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> java.io.<span class="hljs-keyword">BufferedReader</span>;
+<span class="hljs-keyword">import</span> java.io.IOException;
+<span class="hljs-keyword">import</span> java.io.InputStreamReader;
+<span class="hljs-keyword">import</span> java.util.*;
+
+<span class="hljs-keyword">public</span> class Main {
+    <span class="hljs-keyword">static</span> Map&lt;Integer,Map&lt;Integer,Boolean&gt;&gt; isIncludeMap;
+    <span class="hljs-keyword">static</span> List&lt;Integer&gt;[] orderArr;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> main(<span class="hljs-keyword">String</span>[] args) <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-keyword">BufferedReader</span> bf = <span class="hljs-keyword">new</span> <span class="hljs-keyword">BufferedReader</span>(<span class="hljs-keyword">new</span> InputStreamReader(System.in));
+        <span class="hljs-keyword">String</span>[] s = bf.readLine().<span class="hljs-built_in">split</span>(<span class="hljs-string">" "</span>);
+        <span class="hljs-built_in">int</span> n = Integer.parseInt(s[<span class="hljs-number">0</span>]);
+        <span class="hljs-built_in">int</span> k = Integer.parseInt(s[<span class="hljs-number">1</span>]);
+
+        orderArr = <span class="hljs-keyword">new</span> List[n+<span class="hljs-number">1</span>];
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">1</span>; i &lt; n+<span class="hljs-number">1</span>; i++)
+            orderArr[i] = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
+
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; k; i++) {
+            <span class="hljs-keyword">String</span>[] tmp = bf.readLine().<span class="hljs-built_in">split</span>(<span class="hljs-string">" "</span>);
+            <span class="hljs-built_in">int</span> a = Integer.parseInt(tmp[<span class="hljs-number">0</span>]);
+            <span class="hljs-built_in">int</span> b = Integer.parseInt(tmp[<span class="hljs-number">1</span>]);
+
+            orderArr[a].<span class="hljs-built_in">add</span>(b);
+        }
+
+        isIncludeMapping();
+
+        <span class="hljs-built_in">int</span> t = Integer.parseInt(bf.readLine().<span class="hljs-built_in">split</span>(<span class="hljs-string">" "</span>)[<span class="hljs-number">0</span>]);
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; t; i++) {
+            <span class="hljs-keyword">String</span>[] tmp = bf.readLine().<span class="hljs-built_in">split</span>(<span class="hljs-string">" "</span>);
+            <span class="hljs-built_in">int</span> a = Integer.parseInt(tmp[<span class="hljs-number">0</span>]);
+            <span class="hljs-built_in">int</span> b = Integer.parseInt(tmp[<span class="hljs-number">1</span>]);
+
+            System.out.<span class="hljs-built_in">println</span>(compare(a,b));
+        }
+
+    }
+
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> isIncludeMapping() {
+        isIncludeMap = <span class="hljs-keyword">new</span> <span class="hljs-keyword">HashMap</span>&lt;&gt;();
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">1</span>; i &lt; orderArr.length; i++)
+            isIncludeMap.put(i,bfs(i));
+    }
+
+    <span class="hljs-keyword">static</span> Map&lt;Integer,Boolean&gt; bfs(<span class="hljs-built_in">int</span> start) {
+        Queue&lt;Integer&gt; queue = <span class="hljs-keyword">new</span> LinkedList&lt;&gt;();
+        Map&lt;Integer,Boolean&gt; res = <span class="hljs-keyword">new</span> <span class="hljs-keyword">HashMap</span>&lt;&gt;();
+        <span class="hljs-built_in">boolean</span>[] visit = <span class="hljs-keyword">new</span> <span class="hljs-built_in">boolean</span>[orderArr.length];
+
+        queue.<span class="hljs-built_in">add</span>(start);
+
+        <span class="hljs-keyword">while</span> (queue.<span class="hljs-built_in">size</span>() &gt; <span class="hljs-number">0</span>) {
+            <span class="hljs-built_in">int</span> node = queue.poll();
+            <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> num : orderArr[node])
+                <span class="hljs-keyword">if</span> (!visit[num]) {
+                    visit[num] = <span class="hljs-keyword">true</span>;
+                    res.put(num,<span class="hljs-keyword">true</span>);
+                    queue.<span class="hljs-built_in">add</span>(num);
+                }
+        }
+        <span class="hljs-keyword">return</span> res;
+    }
+
+    <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> compare(<span class="hljs-built_in">int</span> a, <span class="hljs-built_in">int</span> b) {
+        <span class="hljs-keyword">if</span> (isIncludeMap.<span class="hljs-built_in">get</span>(a).containsKey(b)) <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+        <span class="hljs-keyword">if</span> (isIncludeMap.<span class="hljs-built_in">get</span>(b).containsKey(a)) <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    }
+}
+</code></pre>
+
+  </div>
+</body>
+</html>
