@@ -37,6 +37,31 @@
       width : min(775px, 90vw);
       margin :auto;
     }
+
+    .pageLetter {
+      font-size: 18px;
+    }
+
+    .activePage {
+      font-size: 22px !important;
+      color: blue !important;
+    }
+
+    .pageItem {
+      font-size: 20px;
+      color: gray;
+      transition: all 0.3s ease 0s;
+    }
+
+    .pageItem:hover {
+      cursor: pointer;
+      font-size: 22px !important;
+      color: blue !important;
+    }
+
+    .write-container {
+      height : 486.8px;
+    }
   </style>
 </head>
 <body>
@@ -46,31 +71,62 @@
       <div class="nav-link deactive-page" id="ct">카테고리</div>
     </div>
     <div class="recent">
-      <hr>
-      <a href="./230306.html">객체지향언어 - 클래스 메서드와 인스턴스 메서드</a>
-      <div class="date">2023. 3. 6</div>
-      <hr>
-      <a href="./230305.html">객체지향언어 - JVM 메모리 구조</a>
-      <div class="date">2023. 3. 5</div>
-      <hr>
-      <a href="./230303.html">17825번 - 주사위 윷놀이</a>
-      <div class="date">2023. 3. 3</div>
-      <hr>
-      <a href="./230225.html">객체지향언어 - 클래스와 객체</a>
-      <div class="date">2023. 2. 25</div>
-      <hr>
-      <a href="./230223.html">1613번 - 역사</a>
-      <div class="date">2023. 2. 23</div>
-      <hr>
-      <a href="./230222.html">17837번 - 새로운 게임 2</a>
-      <div class="date">2023. 2. 22</div>
-      <hr>
-      <a href="./230219.html">서블릿-예제</a>
-      <div class="date">2023. 2. 19</div>
-      <hr>
-      <a href="./230217.html">서블릿</a>
-      <div class="date">2023. 2. 17</div>
-      <hr>
+      <div class="write-container">
+        <div class="write">
+          <hr>
+          <a href="./230306.html">객체지향언어 - 클래스 메서드와 인스턴스 메서드</a>
+          <div class="date">2023. 3. 6</div>
+        </div>
+        <div class="write">
+          <hr>
+          <a href="./230305.html">객체지향언어 - JVM 메모리 구조</a>
+          <div class="date">2023. 3. 5</div>
+        </div>
+        <div class="write">
+          <hr>
+          <a href="./230303.html">17825번 - 주사위 윷놀이</a>
+          <div class="date">2023. 3. 3</div>
+        </div>
+        <div class="write">
+          <hr>
+          <a href="./230225.html">객체지향언어 - 클래스와 객체</a>
+          <div class="date">2023. 2. 25</div>
+        </div>
+        <div class="write">
+          <hr>
+          <a href="./230223.html">1613번 - 역사</a>
+          <div class="date">2023. 2. 23</div>
+        </div>
+        <div class="write">
+          <hr>
+          <a href="./230222.html">17837번 - 새로운 게임 2</a>
+          <div class="date">2023. 2. 22</div>
+        </div>
+        <div class="write">
+          <hr>
+          <a href="./230219.html">서블릿-예제</a>
+          <div class="date">2023. 2. 19</div>
+        </div>
+        <div class="write">
+          <hr>
+          <a href="./230217.html">서블릿</a>
+          <div class="date">2023. 2. 17</div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center">
+        <button style="border : 0px; background-color: white;">
+          <svg id="clickPre" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+          </svg>
+        </button>     
+        <div class="paginates text-center">
+        </div>
+        <button style="border : 0px; background-color: white;">
+          <svg id="clickNext" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </button>    
+      </div>  
     </div>
     <div class="category d-none">
       <ul>스프링
@@ -104,6 +160,75 @@
       if (document.querySelector("#ct").classList.contains("deactive-page")) {
         document.querySelector("#ct").classList.remove("deactive-page")
         document.querySelector("#rc").classList.add("deactive-page")
+      }
+    })
+
+    let idx = 1
+    let writings = document.querySelectorAll(".write")
+
+    for (let i = 6; i < writings.length; i++) {
+      writings[i].classList.add("d-none")
+    }
+
+    for (let i = 0; i < writings.length / 6; i++) {
+      let tmp = document.createElement("div")
+      tmp.classList.add("d-inline-block")
+      tmp.classList.add("fw-bold")
+      tmp.classList.add("mx-2")
+      tmp.classList.add("pageItem")
+      num = i + 1
+      tmp.innerText = num
+      tmp.setAttribute("id","page" + num)
+      if (i == 0) tmp.classList.add("activePage")
+      if (i > 9) tmp.classList.add("d-none")
+      document.querySelector(".paginates").appendChild(tmp)
+    }
+
+    let page = document.querySelectorAll(".pageItem")
+
+    function changeIdx(num) {
+      let tmp = document.querySelectorAll(".pageItem")
+      for (let i = 0; i < tmp.length; i++) {
+        if (tmp[i].classList.contains("activePage"))
+          tmp[i].classList.remove("activePage")
+      }
+      document.querySelector("#page" + num).classList.add("activePage");
+      for (let i = 6*(idx-1); i < Math.min(writings.length,6*idx); i++) {
+        writings[i].classList.add("d-none")
+      }
+      idx = num;
+      for (let i = 6*(idx-1); i < Math.min(writings.length,6*idx); i++) {
+        writings[i].classList.remove("d-none")
+      }
+    }
+
+    for (let i = 1; i < writings.length / 6 + 1; i++) {
+      document.querySelector("#page" + i).addEventListener("click", () => {
+        changeIdx(i)
+      })
+    }
+
+    document.querySelector("#clickPre").addEventListener("click", () => {
+      if (idx != 1) {
+        if (idx % 10 == 1) {
+          for (let i = idx - 10; i < idx; i++) 
+            page[i - 1].classList.remove("d-none")
+          for (let i = idx; i < Math.min(page.length + 1, idx + 10); i++) 
+            page[i - 1].classList.add("d-none")
+        }
+        changeIdx(idx-1)
+      }
+    })
+
+    document.querySelector("#clickNext").addEventListener("click", () => {
+      if (idx != parseInt(writings.length / 6) + 1) {
+        if (idx % 10 == 0) {
+          for (let i = idx + 1; i < Math.min(page.length + 1, idx + 11); i++) 
+            page[i - 1].classList.remove("d-none")
+          for (let i = idx - 9; i < idx + 1; i++) 
+            page[i - 1].classList.add("d-none")
+        }
+        changeIdx(idx+1)
       }
     })
   </script>
