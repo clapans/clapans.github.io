@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3273번 - 두 수의 합</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <style>
+    .md-container {
+      width : min(775px, 90vw);
+      margin :auto;
+    }
+
+    pre {
+      border: 0.5px solid lightgray;
+      background-color:  #f7f7f7;
+      margin-top : 30px;
+      margin-bottom : 30px;
+    }
+
+    img {
+      width: 100%;
+      margin-top : 25px;
+      margin-bottom : 25px;
+    }
+
+    h2 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+    h3 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h4 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h5 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="md-container">
+    <h2 class="fw-bold">3273번 - 두 수의 합</h2>
+<h4 id="-">분류 : 투 포인터</h4>
+<h4 id="-">제약조건</h4>
+<ul>
+<li>n개의 서로 다른 양의 정수 a1, a2, ..., an으로 이루어진 수열이 있다. ai의 값은 1보다 크거나 같고, 1000000보다 작거나 같은 자연수이다. 자연수 x가 주어졌을 때, ai + aj = x (1 ≤ i &lt; j ≤ n)을 만족하는 (ai, aj)쌍의 수를 구한다.</li>
+</ul>
+<h4 id="-">설계</h4>
+<ol>
+<li><p>모든 경우의 수로 설계로 할 경우 100000C2로 이를 어림잡으면 5*10^9 정도가 된다. 초당 10억개 정도의 계산이 컴퓨터 가능하다고 생각했을 때 시간제한이 1초인 문제임으로 설계에 적합하지 않다.</p>
+</li>
+<li><p>모든 경우의 수를 굳이 다 따지지 않더라도 어떠한 수 a,b가 있을 때 a+b와 x의 관계를 가지고 경우의수를 줄일 수 있다.</p>
+<p>a+b가 x와 같은 경우 a를 그대로 두고 b를 더 큰 수나 작은 수로 바꾸거나 b를 그대로 두고 더 큰 수나 작은 수로 바꾸는 경우는 따질 필요가 없다.</p>
+<p>반대로 a+b가 x보다 작거나 큰 경우는 a나 b를 고정하고 다른 수와의 조합의 경우를 계산해볼 필요는 있다.</p>
+<p>따라서 정렬 후 수열의 가장 작은 수와 가장 큰 수의 조합으로부터 시작해서 이 합이 x와 같다면 두 수를 모두 한 칸 씩 이동시키고 크거나 작다면 조건에 따라 하나의 수를 고정시키고 한 쪽만 옮기는 식으로 설계를 한다면 모든 조합을 다 탐색하지 않아도 결과를 구할 수 있을 것이다.</p>
+</li>
+</ol>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> java.io.BufferedReader;
+<span class="hljs-keyword">import</span> java.io.IOException;
+<span class="hljs-keyword">import</span> java.io.InputStreamReader;
+<span class="hljs-keyword">import</span> java.util.Arrays;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> Main {
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> main(<span class="hljs-keyword">String</span>[] args) throws IOException {
+        BufferedReader bf = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> InputStreamReader(System.in));
+
+        <span class="hljs-keyword">int</span> n = Integer.<span class="hljs-built_in">parseInt</span>(bf.readLine());
+        <span class="hljs-keyword">String</span>[] sArr = bf.readLine().split(<span class="hljs-string">" "</span>);
+        <span class="hljs-keyword">int</span>[] arr = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[n];
+        <span class="hljs-built_in">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; n; i++)
+            arr[i] = Integer.<span class="hljs-built_in">parseInt</span>(sArr[i]);
+        <span class="hljs-keyword">int</span> num = Integer.<span class="hljs-built_in">parseInt</span>(bf.readLine());
+        System.out.<span class="hljs-built_in">println</span>(makeNum(arr,num));
+
+    }
+
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> makeNum(<span class="hljs-keyword">int</span>[] arr, <span class="hljs-keyword">int</span> num) {
+        <span class="hljs-built_in">if</span> (arr.length == <span class="hljs-number">0</span>) <span class="hljs-built_in">return</span> <span class="hljs-number">0</span>;
+        Arrays.sort(arr);
+        <span class="hljs-keyword">int</span> res = <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">int</span> start = <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">int</span> <span class="hljs-built_in">end</span> = arr.length - <span class="hljs-number">1</span>;
+
+        <span class="hljs-built_in">while</span> (start &lt; <span class="hljs-built_in">end</span>) {
+            <span class="hljs-keyword">int</span> sum = arr[start] + arr[<span class="hljs-built_in">end</span>];
+            <span class="hljs-built_in">if</span> (sum == num) {
+                res++;
+                start++;
+                <span class="hljs-built_in">end</span>--;
+            } <span class="hljs-built_in">else</span> <span class="hljs-built_in">if</span> (sum &lt; num)
+                start++;
+            <span class="hljs-built_in">else</span>
+                <span class="hljs-built_in">end</span>--;
+        }
+        <span class="hljs-built_in">return</span> res;
+    }
+}
+</code></pre>
+
+  </div>
+</body>
+</html>
