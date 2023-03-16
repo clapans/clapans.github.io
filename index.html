@@ -62,74 +62,101 @@
     .write-container {
       height : 486.8px;
     }
+
+    #searchBarCtnr {
+      border-radius: 30px;
+      width: 70%;
+      height: 50px !important;
+      border: 1px solid rgb(209, 207, 207);
+      font-size: 18px;
+      background-color: white;
+    }
+    #searchBar {
+      border: none;
+      width: calc(100% - 75px);
+      margin-top: 10px;
+      margin-left: 15px;
+    }
+    #searchBar:focus {outline:none;}
   </style>
 </head>
 <body>
   <div class="md-container">
-    <div style="margin-top : 150px" class="d-flex justify-content-between"> 
+    <div class="container mb-3" id="searchBarCtnr" style="margin-top : 150px">
+      <input type="text" id="searchBar" autocomplete="off">
+      <svg style="position: absolute;top: 163px;margin-left: 20px;margin-right: 20px;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+      </svg>
+    </div>
+    <div class="d-flex justify-content-between"> 
       <div class="nav" >
         <div class="nav-link" id="rc">최신글</div>
         <div class="nav-link deactive-page" id="ct">카테고리</div>
       </div>
-      <div class="d-flex">
-        <div class="fw-bold" style="font-size: 18px;">총 포스트 수 </div>
-        <div class="totalWrite" style="font-size: 18px"></div>
+      <div class="nav" style="align-items: center;">
+        <div class="fw-bold nav-link" style="font-size: 18px">총 포스트 수 </div>
+        <div class="totalWrite nav-link" style="font-size: 18px; font-weight: normal !important"></div>
       </div>
     </div>
     <div class="recent">
       <div class="write-container">
-        <div class="write">
+        <div class="write d-none">
+          <hr>
+          <a href="./230316.html">3085번 사탕 게임</a>
+          <div class="date">2023. 3. 16</div>
+        </div>
+        <div class="write d-none">
           <hr>
           <a href="./230309-2.html">3273번 두 수의 합</a>
           <div class="date">2023. 3. 9</div>
         </div>
-        <div class="write">
+        <div class="write d-none">
           <hr>
           <a href="./230309.html">11497번 통나무 건너뛰기</a>
           <div class="date">2023. 3. 9</div>
         </div>
-        <div class="write">
+        <div class="write d-none">
           <hr>
           <a href="./230306.html">객체지향언어 - 클래스 메서드와 인스턴스 메서드</a>
           <div class="date">2023. 3. 6</div>
         </div>
-        <div class="write">
+        <div class="write d-none">
           <hr>
           <a href="./230305.html">객체지향언어 - JVM 메모리 구조</a>
           <div class="date">2023. 3. 5</div>
         </div>
-        <div class="write">
+        <div class="write d-none">
           <hr>
           <a href="./230303.html">17825번 - 주사위 윷놀이</a>
           <div class="date">2023. 3. 3</div>
         </div>
-        <div class="write">
+        <div class="write d-none">
           <hr>
           <a href="./230225.html">객체지향언어 - 클래스와 객체</a>
           <div class="date">2023. 2. 25</div>
         </div>
-        <div class="write">
+        <div class="write d-none">
           <hr>
           <a href="./230223.html">1613번 - 역사</a>
           <div class="date">2023. 2. 23</div>
         </div>
-        <div class="write">
+        <div class="write d-none">
           <hr>
           <a href="./230222.html">17837번 - 새로운 게임 2</a>
           <div class="date">2023. 2. 22</div>
         </div>
-        <div class="write">
+        <div class="write d-none">
           <hr>
           <a href="./230219.html">서블릿-예제</a>
           <div class="date">2023. 2. 19</div>
         </div>
-        <div class="write">
+        <div class="write d-none">
           <hr>
           <a href="./230217.html">서블릿</a>
           <div class="date">2023. 2. 17</div>
         </div>
       </div>
-      <div class="d-flex justify-content-center">
+      <div class="d-flex justify-content-center mt-2 mb-4">
         <button style="border : 0px; background-color: white;">
           <svg id="clickPre" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
             <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>

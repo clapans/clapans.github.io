@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3085번 - 사탕 게임</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <style>
+    .md-container {
+      width : min(775px, 90vw);
+      margin :auto;
+    }
+
+    pre {
+      border: 0.5px solid lightgray;
+      background-color:  #f7f7f7;
+      margin-top : 30px;
+      margin-bottom : 30px;
+    }
+
+    img {
+      width: 100%;
+      margin-top : 25px;
+      margin-bottom : 25px;
+    }
+
+    h2 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+    h3 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h4 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h5 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="md-container">
+    <h2 class="fw-bold">3085번 - 사탕 게임</h2>
+<h4 id="-">분류 : 구현</h4>
+<h4 id="-">제약조건</h4>
+<ul>
+<li><p>가장 처음에 N×N크기에 사탕을 채워 놓는다. 사탕의 색은 모두 같지 않을 수도 있다. 상근이는 사탕의 색이 다른 인접한 두 칸을 고른다. 그 다음 고른 칸에 들어있는 사탕을 서로 교환한다. 이제, 모두 같은 색으로 이루어져 있는 가장 긴 연속 부분(행 또는 열)을 고른 다음 그 사탕을 모두 먹는다.</p>
+</li>
+<li><p>바꾼 부분이 포함되는 열이나 행이 아니라 전체에서 탐색하는 듯 하다.</p>
+</li>
+</ul>
+<h4 id="-">설계</h4>
+<ol>
+<li><p>2차원 String 배열에 입력받은 게임판 정보를 담는다.</p>
+</li>
+<li><p>먼저 사탕을 바꾸기 전에 게임판에서 가장 긴 연속 행이나 열을 찾는다.</p>
+<p>(임의의 어떤 연속 행이나 열이 있을 때 무조건 해당 열이나 행을 건들이지 않고 사탕을 교환할 수 있는 수가 존재한다. 무조건 사탕 교환이 한 번은 가능한 입력만 주어지기 때문)</p>
+<p>찾은 값을 초기 최대 값으로 선정한다.</p>
+</li>
+<li><p>settings() 메서드를 구현한다.</p>
+<p>열이나 행 하나를 고정하고 새로운 1차원 배열에 내용을 담는다.</p>
+<p>getLongest() 메서드를 구현하여 매개변수로 받은 1차원 배열에서 반복문을 통해 가장 긴 연속 열을 찾는다.</p>
+</li>
+<li><p>checkVertical() 메서드를 이용하여 r,c 좌표 값을 받으면 해당 좌표에서 위,아래로 연속으로 존재하는 열의 길이를 구한다.</p>
+<p>checkHorizonal() 메서드를 이용하여 r,c 좌표 값을 받으면 해당 좌표에서 왼,오른으로 연속으로 존재하는 행의 길이를 구한다.</p>
+</li>
+<li><p>가로로 존재하는 사탕을 교환한다면 바뀐 좌표들의 각각 수직 열을 검사해야하고 해당 좌표들이 존재하는 행을 수평으로 검사해야한다. 이 때 주의해야 할 것은 수평으로 조사하는 경우 한 쪽 방향으로만 조사해야한다.</p>
+<p>(무조건 반대 방향에는 다른 색깔이 있기 때문에 색이 달라야 사탕을 바꿀 수 있기 때문)</p>
+<p>아래 그림을 보면 이해를 도울 수 있다.</p>
+</li>
+</ol>
+<img src="./static/230316/1.png" alt="">
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> java.io.<span class="hljs-keyword">BufferedReader</span>;
+<span class="hljs-keyword">import</span> java.io.IOException;
+<span class="hljs-keyword">import</span> java.io.InputStreamReader;
+
+<span class="hljs-keyword">public</span> class Main {
+    <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> n;
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">String</span>[][] board;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> main(<span class="hljs-keyword">String</span>[] args) <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-keyword">BufferedReader</span> bf = <span class="hljs-keyword">new</span> <span class="hljs-keyword">BufferedReader</span>(<span class="hljs-keyword">new</span> InputStreamReader(System.in));
+        n = Integer.parseInt(bf.readLine().strip());
+        board = <span class="hljs-keyword">new</span> <span class="hljs-keyword">String</span>[n][n];
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; n; i++) {
+            <span class="hljs-keyword">String</span>[] tmp = bf.readLine().<span class="hljs-built_in">split</span>(<span class="hljs-string">""</span>);
+            <span class="hljs-keyword">if</span> (n &gt;= <span class="hljs-number">0</span>) System.arraycopy(tmp, <span class="hljs-number">0</span>, board[i], <span class="hljs-number">0</span>, n);
+        }
+        System.out.<span class="hljs-built_in">println</span>(game());
+    }
+
+    <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> settings() {
+        <span class="hljs-built_in">int</span> res = <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; n; i++)
+            res = Math.<span class="hljs-built_in">max</span>(res,getLongest(board[i]));
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; n; i++) {
+            <span class="hljs-keyword">String</span>[] tmp = <span class="hljs-keyword">new</span> <span class="hljs-keyword">String</span>[n];
+            <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> j = <span class="hljs-number">0</span>; j &lt; n; j++)
+                tmp[j] = board[j][i];
+            res = Math.<span class="hljs-built_in">max</span>(res,getLongest(tmp));
+        }
+        <span class="hljs-keyword">return</span> res;
+    }
+    <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> game() {
+        <span class="hljs-built_in">int</span> res = settings();
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; n; i++)
+            <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> j = <span class="hljs-number">0</span>; j &lt; n; j++) {
+                <span class="hljs-keyword">if</span> (j &lt; n - <span class="hljs-number">1</span> &amp;&amp; !board[i][j].equals(board[i][j+<span class="hljs-number">1</span>])) {
+                    res = Math.<span class="hljs-built_in">max</span>(res, checkVertical(i, j, board[i][j+<span class="hljs-number">1</span>],<span class="hljs-keyword">true</span>,<span class="hljs-keyword">true</span>));
+                    res = Math.<span class="hljs-built_in">max</span>(res, checkVertical(i, j + <span class="hljs-number">1</span>, board[i][j],<span class="hljs-keyword">true</span>,<span class="hljs-keyword">true</span>));
+                    res = Math.<span class="hljs-built_in">max</span>(res, checkHorizonal(i, j, board[i][j+<span class="hljs-number">1</span>],<span class="hljs-keyword">true</span>,<span class="hljs-keyword">false</span>));
+                    res = Math.<span class="hljs-built_in">max</span>(res, checkHorizonal(i, j + <span class="hljs-number">1</span>, board[i][j],<span class="hljs-keyword">false</span>,<span class="hljs-keyword">true</span>));
+                }
+                <span class="hljs-keyword">if</span> (i &lt; n - <span class="hljs-number">1</span> &amp;&amp; !board[i][j].equals(board[i+<span class="hljs-number">1</span>][j])) {
+                    res = Math.<span class="hljs-built_in">max</span>(res, checkHorizonal(i, j, board[i+<span class="hljs-number">1</span>][j],<span class="hljs-keyword">true</span>,<span class="hljs-keyword">true</span>));
+                    res = Math.<span class="hljs-built_in">max</span>(res, checkHorizonal(i + <span class="hljs-number">1</span>, j, board[i][j],<span class="hljs-keyword">true</span>,<span class="hljs-keyword">true</span>));
+                    res = Math.<span class="hljs-built_in">max</span>(res, checkVertical(i, j, board[i+<span class="hljs-number">1</span>][j],<span class="hljs-keyword">true</span>,<span class="hljs-keyword">false</span>));
+                    res = Math.<span class="hljs-built_in">max</span>(res, checkVertical(i + <span class="hljs-number">1</span>, j, board[i][j],<span class="hljs-keyword">false</span>,<span class="hljs-keyword">true</span>));
+                }
+
+            }
+        <span class="hljs-keyword">return</span> res;
+    }
+
+    <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> checkVertical(<span class="hljs-built_in">int</span> r, <span class="hljs-built_in">int</span> c, <span class="hljs-keyword">String</span> <span class="hljs-built_in">color</span>, <span class="hljs-built_in">boolean</span> up, <span class="hljs-built_in">boolean</span> down) {
+        <span class="hljs-built_in">int</span> res = <span class="hljs-number">1</span>;
+        <span class="hljs-built_in">int</span> rSave = r;
+        r--;
+        <span class="hljs-keyword">while</span> (up &amp;&amp; r &gt; <span class="hljs-number">-1</span> &amp;&amp; board[r][c].equals(<span class="hljs-built_in">color</span>)) {
+            res++;
+            r--;
+        }
+        r = rSave;
+        r++;
+        <span class="hljs-keyword">while</span> (down &amp;&amp; r &lt; n &amp;&amp; board[r][c].equals(<span class="hljs-built_in">color</span>)) {
+            res++;
+            r++;
+        }
+        <span class="hljs-keyword">return</span> res;
+    }
+
+    <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> checkHorizonal(<span class="hljs-built_in">int</span> r, <span class="hljs-built_in">int</span> c, <span class="hljs-keyword">String</span> <span class="hljs-built_in">color</span>,<span class="hljs-built_in">boolean</span> up, <span class="hljs-built_in">boolean</span> down) {
+        <span class="hljs-built_in">int</span> res = <span class="hljs-number">1</span>;
+        <span class="hljs-built_in">int</span> cSave = c;
+        c--;
+        <span class="hljs-keyword">while</span> (up &amp;&amp; c &gt; <span class="hljs-number">-1</span> &amp;&amp; board[r][c].equals(<span class="hljs-built_in">color</span>)) {
+            res++;
+            c--;
+        }
+        c = cSave;
+        c++;
+        <span class="hljs-keyword">while</span> (down &amp;&amp; c &lt; n &amp;&amp; board[r][c].equals(<span class="hljs-built_in">color</span>)) {
+            res++;
+            c++;
+        }
+        <span class="hljs-keyword">return</span> res;
+    }
+
+    <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> getLongest(<span class="hljs-keyword">String</span>[] arr) {
+        <span class="hljs-built_in">int</span> res = <span class="hljs-number">1</span>;
+        <span class="hljs-built_in">int</span> cnt = <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">String</span> current = arr[<span class="hljs-number">0</span>];
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">1</span>; i &lt; n; i++) {
+            <span class="hljs-keyword">if</span> (current.equals(arr[i]))
+                cnt++;
+            <span class="hljs-keyword">else</span> {
+                res = Math.<span class="hljs-built_in">max</span>(res,cnt);
+                current = arr[i];
+                cnt = <span class="hljs-number">1</span>;
+            }
+        }
+        res = Math.<span class="hljs-built_in">max</span>(res,cnt);
+        <span class="hljs-keyword">return</span> res;
+    }
+}
+</code></pre>
+  </div>
+</body>
+</html>

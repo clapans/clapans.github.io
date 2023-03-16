@@ -26,26 +26,27 @@ document.querySelector("#ct").addEventListener("click",() => {
 
 let idx = 1
 let writings = document.querySelectorAll(".write")
-
-for (let i = 6; i < writings.length; i++) {
-  writings[i].classList.add("d-none")
-}
-
-for (let i = 0; i < writings.length / 6; i++) {
-  let tmp = document.createElement("div")
-  tmp.classList.add("d-inline-block")
-  tmp.classList.add("fw-bold")
-  tmp.classList.add("mx-2")
-  tmp.classList.add("pageItem")
-  num = i + 1
-  tmp.innerText = num
-  tmp.setAttribute("id","page" + num)
-  if (i == 0) tmp.classList.add("activePage")
-  if (i > 9) tmp.classList.add("d-none")
-  document.querySelector(".paginates").appendChild(tmp)
-}
-
 let page = document.querySelectorAll(".pageItem")
+
+function settings(page) {
+  for (let i = (page-1)*6; i < Math.min(writings.length,page*6); i++) {
+    writings[i].classList.remove("d-none")
+  }
+  
+  for (let i = 0; i < writings.length / 6; i++) {
+    let tmp = document.createElement("div")
+    tmp.classList.add("d-inline-block")
+    tmp.classList.add("fw-bold")
+    tmp.classList.add("mx-2")
+    tmp.classList.add("pageItem")
+    num = i + 1
+    tmp.innerText = num
+    tmp.setAttribute("id","page" + num)
+    if (i == (page-1)) tmp.classList.add("activePage")
+    if (i > 9) tmp.classList.add("d-none")
+    document.querySelector(".paginates").appendChild(tmp)
+  }
+}
 
 function changeIdx(num) {
   let tmp = document.querySelectorAll(".pageItem")
@@ -62,6 +63,11 @@ function changeIdx(num) {
     writings[i].classList.remove("d-none")
   }
 }
+
+if (sessionStorage.getItem("page") != null) 
+  idx = parseInt(sessionStorage.getItem("page"))
+
+settings(idx)
 
 for (let i = 1; i < writings.length / 6 + 1; i++) {
   document.querySelector("#page" + i).addEventListener("click", () => {
@@ -94,3 +100,11 @@ document.querySelector("#clickNext").addEventListener("click", () => {
 })
 
 document.querySelector(".totalWrite").innerText = writings.length
+
+let aArr = document.querySelectorAll(".write > a")
+
+for (let i = 0; i < aArr.length; i++) {
+  aArr[i].addEventListener("click", () => {
+    sessionStorage.setItem("page",parseInt(i/6) + 1)
+  })
+}
