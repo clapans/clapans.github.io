@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1106번 - 호텔</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <style>
+    .md-container {
+      width : min(775px, 90vw);
+      margin :auto;
+    }
+
+    pre {
+      border: 0.5px solid lightgray;
+      background-color:  #f7f7f7;
+      margin-top : 30px;
+      margin-bottom : 30px;
+    }
+
+    img {
+      width: 100%;
+      margin-top : 25px;
+      margin-bottom : 25px;
+    }
+
+    h2 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+    h3 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h4 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h5 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="md-container">
+    <h2 class="fw-bold">1106번 - 호텔</h2>
+<h4 id="-">분류 : 다이나믹 프로그래밍</h4>
+<h4 id="-">제약조건</h4>
+<ul>
+<li><p>도시를 홍보하는 데 드는 비용과 유치할 수 있는 고객 양이 정해진다. 무한히 재사용이 가능하다.</p>
+</li>
+<li><p>목표하는 고객 수치가 있으나 그 수치를 넘어가도 괜찮다. 딱 맞출 필요가 없다.</p>
+</li>
+</ul>
+<h4 id="-">설계</h4>
+<ol>
+<li><p>처음에는 그리디로 풀이를 시도 했다. 무조건 가장 효율이 좋은 애로만 다 채우고 남은 부분이 있다면 그 다음 효율 좋은 애로 채우는 식을 생각했다.</p>
+</li>
+<li><p>위의 방법은 하지만 반례가 있다 넘어가도 상관이 없기 때문에 넘어간 상태로 제일 효율 좋은 애로 다 채우는 것이 가장 좋은 방법이 될 수도 있다.</p>
+</li>
+<li><p>그 다음 생각한 방법은 bfs를 통한 모든 경우의 수 탐색이다. N의 개수는 최대 20개다. 그렇다면 bfs로 탐색할 때 한 노드에서 최대 20갈래로 뻗어나간다는 거다. 고객 수 또한 최대 1000임으로 1000을 넘으면 멈춘다고 해도 너무 많은 수다.</p>
+</li>
+<li><p>마지막으로 고려한 게 dp를 이용해서 모든 경우의 수를 따져도 효율적으로 진행하는 것을 생각했다.</p>
+</li>
+<li><p>for 문을 이용해서 고객 수 크기 만큼 순회하면서 해당 위치에서의 dp 값을 이용해 그 다음에 갈 수 있는 위치의 dp값을 갱신시키는 방식으로 설계하였다.</p>
+<p>(물론 이 방법 외에도 bfs를 이용하지만 dp를 이용해서 도착점의 dp값이 현재 value보다 낮으면 queue에 append 하지 않는 방식으로도 풀릴 것 같지만 시도해보진 않았다.)</p>
+</li>
+</ol>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> java.io.<span class="hljs-keyword">BufferedReader</span>;
+<span class="hljs-keyword">import</span> java.io.IOException;
+<span class="hljs-keyword">import</span> java.io.InputStreamReader;
+<span class="hljs-keyword">import</span> java.util.Arrays;
+<span class="hljs-keyword">import</span> java.util.<span class="hljs-keyword">HashMap</span>;
+<span class="hljs-keyword">import</span> java.util.Map;
+
+<span class="hljs-keyword">public</span> class Main {
+    <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> c,n;
+    <span class="hljs-keyword">static</span> Map&lt;Integer,Integer&gt; advertiseCostMap;
+    <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span>[] dp;
+    <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> res = (<span class="hljs-built_in">int</span>)<span class="hljs-number">1e9</span>;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> main(<span class="hljs-keyword">String</span>[] args) <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-keyword">BufferedReader</span> bf = <span class="hljs-keyword">new</span> <span class="hljs-keyword">BufferedReader</span>(<span class="hljs-keyword">new</span> InputStreamReader(System.in));
+        <span class="hljs-keyword">String</span>[] tmp = bf.readLine().<span class="hljs-built_in">split</span>(<span class="hljs-string">" "</span>);
+        c = Integer.parseInt(tmp[<span class="hljs-number">0</span>]);
+        n = Integer.parseInt(tmp[<span class="hljs-number">1</span>]);
+        advertiseCostMap = <span class="hljs-keyword">new</span> <span class="hljs-keyword">HashMap</span>&lt;&gt;();
+        dp = <span class="hljs-keyword">new</span> <span class="hljs-built_in">int</span>[<span class="hljs-number">1101</span>];
+        Arrays.<span class="hljs-built_in">fill</span>(dp, (<span class="hljs-built_in">int</span>) <span class="hljs-number">1e9</span>);
+        dp[<span class="hljs-number">0</span>] = <span class="hljs-number">0</span>;
+
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; n; i++) {
+            tmp = bf.readLine().<span class="hljs-built_in">split</span>(<span class="hljs-string">" "</span>);
+            <span class="hljs-built_in">int</span> <span class="hljs-built_in">key</span> = Integer.parseInt(tmp[<span class="hljs-number">0</span>]);
+            <span class="hljs-built_in">int</span> value = Integer.parseInt(tmp[<span class="hljs-number">1</span>]);
+            <span class="hljs-keyword">if</span> (advertiseCostMap.containsKey(<span class="hljs-built_in">key</span>))
+                <span class="hljs-keyword">if</span> (advertiseCostMap.<span class="hljs-built_in">get</span>(<span class="hljs-built_in">key</span>) &gt;= value)
+                    <span class="hljs-keyword">continue</span>;
+            advertiseCostMap.put(<span class="hljs-built_in">key</span>,value);
+        }
+
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; c; i++) {
+            <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> <span class="hljs-built_in">key</span> : advertiseCostMap.keySet()) {
+                <span class="hljs-built_in">int</span> value = advertiseCostMap.<span class="hljs-built_in">get</span>(<span class="hljs-built_in">key</span>);
+                dp[i+value] = Math.<span class="hljs-built_in">min</span>(dp[i+value],dp[i] + <span class="hljs-built_in">key</span>);
+            }
+        }
+
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = c; i &lt; <span class="hljs-number">1101</span>; i++)
+            res = Math.<span class="hljs-built_in">min</span>(res,dp[i]);
+
+        System.out.<span class="hljs-built_in">println</span>(res);
+    }
+}
+</code></pre>
+
+  </div>
+</body>
+</html>
