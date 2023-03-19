@@ -1,5 +1,46 @@
 let recent = document.querySelector(".recent")
 let category = document.querySelector(".category")
+let searchCandidate = document.querySelector("#searchCandidate")
+let searchBarContainer = document.querySelector("#searchBarCtnr")
+let body = document.querySelector(".whole")
+
+body.addEventListener("click",() => {
+  if (!searchCandidate.classList.contains("d-none")) {
+    searchCandidate.classList.add("d-none")
+    searchBarContainer.setAttribute("style","border-radius: 30px;")
+  }
+})
+
+function getCandidate(e) {
+  if (!searchCandidate.classList.contains("d-none"))
+    searchCandidate.classList.add("d-none")
+  searchBarContainer.setAttribute("style","border-radius: 30px;")
+  while (searchCandidate.hasChildNodes()) 
+    searchCandidate.removeChild(searchCandidate.firstChild );       
+
+  for (let candidate of searchArticle(e.target.value)) {
+    let tmp = document.createElement('div')
+    tmp.setAttribute("style","padding-left : 20px; height : 40px; line-height : 40px")
+    tmp.classList.add("search-item")
+    tmp.innerText = candidate
+    searchCandidate.appendChild(tmp)
+  }
+
+  if (document.querySelectorAll("#searchCandidate > div").length != 0) {
+    searchCandidate.classList.remove("d-none")
+    searchBarContainer.setAttribute("style","border-radius: 30px 30px 0px 0px; border-bottom : 0px")
+  }
+}
+
+document.querySelector("#searchBar").addEventListener("input",(e) => getCandidate(e))
+document.querySelector("#searchBar").addEventListener("click",() => {
+  setTimeout(() => {
+      if (searchCandidate.classList.contains("d-none") && document.querySelectorAll("#searchCandidate > div").length != 0) {
+        searchCandidate.classList.remove("d-none")
+        searchBarContainer.setAttribute("style","border-radius: 30px 30px 0px 0px; border-bottom : 0px")
+      }
+    },10) 
+})
 
 document.querySelector("#rc").addEventListener("click",() => {
   if (recent.classList.contains("d-none")) {
