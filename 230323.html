@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1922번 - 네트워크 연결</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <style>
+    .md-container {
+      width : min(775px, 90vw);
+      margin :auto;
+    }
+
+    pre {
+      border: 0.5px solid lightgray;
+      background-color:  #f7f7f7;
+      margin-top : 30px;
+      margin-bottom : 30px;
+    }
+
+    img {
+      width: 100%;
+      margin-top : 25px;
+      margin-bottom : 25px;
+    }
+
+    h2 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+    h3 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h4 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h5 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="md-container">
+    <h2 class="fw-bold">1922번 - 네트워크 연결</h2>
+      <h4 id="-">분류 : 최소 스패닝 트리, 그리디</h4>
+      <h4 id="-">문제</h4>
+      <p>도현이는 컴퓨터와 컴퓨터를 모두 연결하는 네트워크를 구축하려 한다. 하지만 아쉽게도 허브가 있지 않아 컴퓨터와 컴퓨터를 직접 연결하여야 한다. 그런데 모두가 자료를 공유하기 위해서는 모든 컴퓨터가 연결이 되어 있어야 한다. (a와 b가 연결이 되어 있다는 말은 a에서 b로의 경로가 존재한다는 것을 의미한다. a에서 b를 연결하는 선이 있고, b와 c를 연결하는 선이 있으면 a와 c는 연결이 되어 있다.)</p>
+      <p>그런데 이왕이면 컴퓨터를 연결하는 비용을 최소로 하여야 컴퓨터를 연결하는 비용 외에 다른 곳에 돈을 더 쓸 수 있을 것이다. 이제 각 컴퓨터를 연결하는데 필요한 비용이 주어졌을 때 모든 컴퓨터를 연결하는데 필요한 최소비용을 출력하라. 모든 컴퓨터를 연결할 수 없는 경우는 없다.</p>
+      <h4 id="-">설계</h4>
+      <ol>
+      <li><p>간선의 비용이 주어지고 모든 정점을 이을 수 있게 최소 비용으로 사용하는 최소 스패닝 트리 문제이다.</p>
+      </li>
+      <li><p>임의의 정점을 선택하고 해당 정점을 잇는 모든 간선을 우선순위 큐에 넣는다.</p>
+      </li>
+      <li><p>우선순위 큐는 Comparable을 구현하여 간선의 비용이 낮은 순서대로 우선순위를 두었다.</p>
+      </li>
+      <li><p>우선순위 큐에서 간선을 뽑고 해당 간선의 목적지가 아직 방문하지 않았다면 방문 처리 후 해당 목적지에서 출발하는 간선을 모두 우선순위 큐에 넣는다.</p>
+      </li>
+      <li><p>우선순위 큐의 사이즈가 0이 될 때 까지 이를 반복한다.</p>
+      </li>
+      </ol>
+      <pre><code class="lang-java"><span class="hljs-keyword">import</span> java.io.BufferedReader;
+      <span class="hljs-keyword">import</span> java.io.IOException;
+      <span class="hljs-keyword">import</span> java.io.InputStreamReader;
+      <span class="hljs-keyword">import</span> java.util.ArrayList;
+      <span class="hljs-keyword">import</span> java.util.List;
+      <span class="hljs-keyword">import</span> java.util.PriorityQueue;
+      
+      <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Edge</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Comparable</span>&lt;<span class="hljs-title">Edge</span>&gt;</span>{
+          <span class="hljs-keyword">int</span> destination,cost;
+      
+          <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Edge</span><span class="hljs-params">(<span class="hljs-keyword">int</span> destination, <span class="hljs-keyword">int</span> cost)</span> </span>{
+              <span class="hljs-keyword">this</span>.destination = destination;
+              <span class="hljs-keyword">this</span>.cost = cost;
+          }
+      
+          <span class="hljs-meta">@Override</span>
+          <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">compareTo</span><span class="hljs-params">(Edge o)</span> </span>{
+              <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.cost &lt; o.cost) <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;
+              <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+          }
+      }
+      
+      <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Main</span> </span>{
+          <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> n,m;
+          <span class="hljs-keyword">static</span> List&lt;Edge&gt;[] cost;
+      
+          <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IOException </span>{
+              BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> InputStreamReader(System.in));
+              n = Integer.parseInt(br.readLine());
+              m = Integer.parseInt(br.readLine());
+              cost = <span class="hljs-keyword">new</span> List[n+<span class="hljs-number">1</span>];
+      
+              <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; n+<span class="hljs-number">1</span>; i++)
+                  cost[i] = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
+      
+              <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; m; i++) {
+                  String[] tmp = br.readLine().split(<span class="hljs-string">" "</span>);
+                  <span class="hljs-keyword">int</span> a = Integer.parseInt(tmp[<span class="hljs-number">0</span>]);
+                  <span class="hljs-keyword">int</span> b = Integer.parseInt(tmp[<span class="hljs-number">1</span>]);
+                  <span class="hljs-keyword">int</span> c = Integer.parseInt(tmp[<span class="hljs-number">2</span>]);
+                  cost[a].add(<span class="hljs-keyword">new</span> Edge(b,c));
+                  cost[b].add(<span class="hljs-keyword">new</span> Edge(a,c));
+              }
+      
+              System.out.println(getLowestCost());
+          }
+      
+          <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> <span class="hljs-title">getLowestCost</span><span class="hljs-params">()</span> </span>{
+              PriorityQueue&lt;Edge&gt; priorityQueue = <span class="hljs-keyword">new</span> PriorityQueue&lt;&gt;(cost[<span class="hljs-number">1</span>]);
+              <span class="hljs-keyword">boolean</span>[] visit = <span class="hljs-keyword">new</span> <span class="hljs-keyword">boolean</span>[n+<span class="hljs-number">1</span>];
+              visit[<span class="hljs-number">1</span>] = <span class="hljs-keyword">true</span>;
+              <span class="hljs-keyword">int</span> res = <span class="hljs-number">0</span>;
+      
+              <span class="hljs-keyword">while</span> (priorityQueue.size() &gt; <span class="hljs-number">0</span>) {
+                  Edge edge = priorityQueue.poll();
+                  <span class="hljs-keyword">if</span> (visit[edge.destination])
+                      <span class="hljs-keyword">continue</span>;
+                  visit[edge.destination] = <span class="hljs-keyword">true</span>;
+                  priorityQueue.addAll(cost[edge.destination]);
+                  res += edge.cost;
+              }
+              <span class="hljs-keyword">return</span> res;
+          }
+      }
+      </code></pre>
+  </div>
+</body>
+</html>
