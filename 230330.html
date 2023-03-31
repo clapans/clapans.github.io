@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>13913번 - 숨바꼭질 4</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <style>
+    .md-container {
+      width : min(775px, 90vw);
+      margin :auto;
+    }
+
+    pre {
+      border: 0.5px solid lightgray;
+      background-color:  #f7f7f7;
+      margin-top : 30px;
+      margin-bottom : 30px;
+    }
+
+    img {
+      width: 100%;
+      margin-top : 25px;
+      margin-bottom : 25px;
+    }
+
+    h2 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+    h3 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h4 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h5 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="md-container">
+    <h2 class="fw-bold">13913번 - 숨바꼭질 4</h2>
+<h4 id="-">분류 : 그래프 이론, 그래프 탐색, 너비 우선 탐색</h4>
+<h4 id="-">문제</h4>
+<p>수빈이는 동생과 숨바꼭질을 하고 있다. 수빈이는 현재 점 N(0 ≤ N ≤ 100,000)에 있고, 동생은 점 K(0 ≤ K ≤ 100,000)에 있다. 수빈이는 걷거나 순간이동을 할 수 있다. 만약, 수빈이의 위치가 X일 때 걷는다면 1초 후에 X-1 또는 X+1로 이동하게 된다. 순간이동을 하는 경우에는 1초 후에 2*X의 위치로 이동하게 된다.</p>
+<p>수빈이와 동생의 위치가 주어졌을 때, 수빈이가 동생을 찾을 수 있는 가장 빠른 시간이 몇 초 후인지 구하는 프로그램을 작성하시오.</p>
+<h4 id="-">풀이</h4>
+<p>개인적으로 아쉬움이 많이 남는 문제였다.</p>
+<p>처음에는 지나온 경로를 큐의 Node에 저장을 했었다.</p>
+<p>새로운 Node를 만들어 add할 때마다 새로운 List를 만들어야한다. List는 참조변수 이기때문에 계속해서 새로운 리스트를 만들어줘야 한다.</p>
+<p>그렇지 않으면 경로가 계속해서 중첩되서 add 될 것이다.</p>
+<p>새로 리스트를 계속 만든다고 한다면 bfs를 반복하면서 생기는 노드 개수에다가 지나온 경로 곱한 것만큼 시간이 걸린 것이다.(내가 시간초과가 된 주된 원인)</p>
+<p>이를 해결하지 못해서 결국 다른 곳에서 힌트를 얻었다.</p>
+<p>일반적인 다익스트라랑 달리 이동하는 데에 드는 비용은 무조건 1씩 추가된다.</p>
+<p>이 말은 즉, 한 번 방문한 노드를 다른 경로로 다시 방문했을 때 비용이 더 쌀 수 있는 방법이 존재하지 않는다.</p>
+<p>따라서 임의의 한 노드가 가지는 이전 노드는 무조건 한개이다. 그러므로 int[] 배열은 이용해서 이전 노드를 LinkedList 같이 저장하고 이를 거꾸로 출력하면 된다..</p>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> java.io.BufferedReader;
+<span class="hljs-keyword">import</span> java.io.IOException;
+<span class="hljs-keyword">import</span> java.io.InputStreamReader;
+<span class="hljs-keyword">import</span> java.util.*;
+
+<span class="hljs-keyword">class</span> Node {
+    <span class="hljs-keyword">int</span> <span class="hljs-built_in">position</span>,cost;
+
+    <span class="hljs-keyword">public</span> Node(<span class="hljs-keyword">int</span> <span class="hljs-built_in">position</span>, <span class="hljs-keyword">int</span> cost) {
+        <span class="hljs-keyword">this</span>.<span class="hljs-built_in">position</span> = <span class="hljs-built_in">position</span>;
+        <span class="hljs-keyword">this</span>.cost = cost;
+    }
+
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> Main {
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> n, k;
+    <span class="hljs-keyword">static</span> Queue&lt;Node&gt; queue;
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] dp;
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] savePath;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> main(<span class="hljs-keyword">String</span>[] args) throws IOException {
+        BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> InputStreamReader(System.in));
+        <span class="hljs-keyword">String</span>[] inputArr = br.readLine().split(<span class="hljs-string">" "</span>);
+        n = Integer.<span class="hljs-built_in">parseInt</span>(inputArr[<span class="hljs-number">0</span>]);
+        k = Integer.<span class="hljs-built_in">parseInt</span>(inputArr[<span class="hljs-number">1</span>]);
+        dp = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[<span class="hljs-number">100001</span>];
+        savePath = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[<span class="hljs-number">100001</span>];
+        Arrays.<span class="hljs-built_in">fill</span>(dp, (<span class="hljs-keyword">int</span>) <span class="hljs-number">1e9</span>);
+        queue = <span class="hljs-keyword">new</span> LinkedList&lt;&gt;();
+        queue.add(<span class="hljs-keyword">new</span> Node(n, <span class="hljs-number">0</span>));
+        System.out.<span class="hljs-built_in">println</span>(getFastestWay());
+        <span class="hljs-keyword">int</span> current = k;
+        List&lt;Integer&gt; res = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
+        <span class="hljs-built_in">while</span> (current != n) {
+            res.add(current);
+            current = savePath[current];
+        }
+        res.add(current);
+        <span class="hljs-built_in">for</span> (<span class="hljs-keyword">int</span> i = res.<span class="hljs-built_in">size</span>() - <span class="hljs-number">1</span>; i &gt; <span class="hljs-number">-1</span>; i--)
+            System.out.printf(<span class="hljs-string">"%d "</span>, res.<span class="hljs-built_in">get</span>(i));
+    }
+
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> getFastestWay() {
+        <span class="hljs-built_in">while</span> (queue.<span class="hljs-built_in">size</span>() &gt; <span class="hljs-number">0</span>) {
+            Node node = queue.poll();
+            <span class="hljs-built_in">if</span> (node.<span class="hljs-built_in">position</span> == k)
+                <span class="hljs-built_in">return</span> node.cost;
+            addNode(node.<span class="hljs-built_in">position</span> - <span class="hljs-number">1</span>, node.cost, node.<span class="hljs-built_in">position</span>);
+            addNode(node.<span class="hljs-built_in">position</span> + <span class="hljs-number">1</span>, node.cost, node.<span class="hljs-built_in">position</span>);
+            addNode(node.<span class="hljs-built_in">position</span> * <span class="hljs-number">2</span>, node.cost, node.<span class="hljs-built_in">position</span>);
+        }
+        <span class="hljs-built_in">return</span> <span class="hljs-number">-1</span>;
+    }
+
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> addNode(<span class="hljs-keyword">int</span> x, <span class="hljs-keyword">int</span> cost, <span class="hljs-keyword">int</span> pre) {
+        <span class="hljs-built_in">if</span> (<span class="hljs-number">0</span> &gt; x || x &gt; <span class="hljs-number">100000</span>)
+            <span class="hljs-built_in">return</span>;
+        <span class="hljs-built_in">if</span> (cost + <span class="hljs-number">1</span> &lt; dp[x]) {
+            dp[x] = cost + <span class="hljs-number">1</span>;
+            queue.add(<span class="hljs-keyword">new</span> Node(x, cost + <span class="hljs-number">1</span>));
+            savePath[x] = pre;
+        }
+    }
+}
+</code></pre>
+
+  </div>
+</body>
+</html>
