@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>14425번 - 문자열 집합</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <style>
+    .md-container {
+      width : min(775px, 90vw);
+      margin :auto;
+    }
+
+    pre {
+      border: 0.5px solid lightgray;
+      background-color:  #f7f7f7;
+      margin-top : 30px;
+      margin-bottom : 30px;
+    }
+
+    img {
+      width: 100%;
+      margin-top : 25px;
+      margin-bottom : 25px;
+    }
+
+    h2 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+    h3 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h4 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h5 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="md-container">
+    <h2 class="fw-bold">14425번 - 문자열 집합</h2>
+<h4 id="-">분류 : 자료 구조, 문자열</h4>
+<h4 id="-">문제</h4>
+<p>총 N개의 문자열로 이루어진 집합 S가 주어진다.</p>
+<p>입력으로 주어지는 M개의 문자열 중에서 집합 S에 포함되어 있는 것이 총 몇 개인지 구하는 프로그램을 작성하시오.</p>
+<h4 id="-">풀이</h4>
+<p>맵을 이용하면 간단히 풀 수 있는 문제이다.</p>
+<p>맵의 경우 key에 대한 탐색이 O(1) 이기 때문에 시간초과가 나지 않지만</p>
+<p>문자열 집합을 리스트에 저장할 경우 O(n)으로 시간 초과가 발생하게 된다.</p>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> java.io.<span class="hljs-keyword">BufferedReader</span>;
+<span class="hljs-keyword">import</span> java.io.IOException;
+<span class="hljs-keyword">import</span> java.io.InputStreamReader;
+<span class="hljs-keyword">import</span> java.util.<span class="hljs-keyword">HashMap</span>;
+<span class="hljs-keyword">import</span> java.util.Map;
+
+<span class="hljs-keyword">public</span> class Main {
+    <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> n,m;
+    <span class="hljs-keyword">static</span> Map&lt;<span class="hljs-keyword">String</span>,Boolean&gt; stringMap = <span class="hljs-keyword">new</span> <span class="hljs-keyword">HashMap</span>&lt;&gt;();
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> main(<span class="hljs-keyword">String</span>[] args) <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-keyword">BufferedReader</span> br = <span class="hljs-keyword">new</span> <span class="hljs-keyword">BufferedReader</span>(<span class="hljs-keyword">new</span> InputStreamReader(System.in));
+        <span class="hljs-keyword">String</span>[] inputTmp = br.readLine().<span class="hljs-built_in">split</span>(<span class="hljs-string">" "</span>);
+
+        n = Integer.parseInt(inputTmp[<span class="hljs-number">0</span>]);
+        m = Integer.parseInt(inputTmp[<span class="hljs-number">1</span>]);
+
+        <span class="hljs-built_in">int</span> res = <span class="hljs-number">0</span>;
+
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; n; i++)
+            stringMap.put(br.readLine().strip(),<span class="hljs-keyword">true</span>);
+
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; m; i++)
+            <span class="hljs-keyword">if</span> (isInclude(br.readLine().strip()))
+                res++;
+
+        System.out.<span class="hljs-built_in">println</span>(res);
+    }
+
+    <span class="hljs-keyword">static</span> <span class="hljs-built_in">boolean</span> isInclude(<span class="hljs-keyword">String</span> s) {
+        <span class="hljs-keyword">return</span> stringMap.containsKey(s);
+    }
+}
+</code></pre>
+
+  </div>
+</body>
+</html>
