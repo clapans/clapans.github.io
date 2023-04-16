@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2470번 - 두 용액</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <style>
+    .md-container {
+      width : min(775px, 90vw);
+      margin :auto;
+    }
+
+    pre {
+      border: 0.5px solid lightgray;
+      background-color:  #f7f7f7;
+      margin-top : 30px;
+      margin-bottom : 30px;
+    }
+
+    img {
+      width: 100%;
+      margin-top : 25px;
+      margin-bottom : 25px;
+    }
+
+    h2 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+    h3 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h4 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h5 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="md-container">
+    <h2 class="fw-bold">2470번 - 두 용액</h2>
+<h4 id="-">분류 : 정렬, 두 포인터</h4>
+<h4 id="-">문제</h4>
+<p>KOI 부설 과학연구소에서는 많은 종류의 산성 용액과 알칼리성 용액을 보유하고 있다. 각 용액에는 그 용액의 특성을 나타내는 하나의 정수가 주어져있다. 산성 용액의 특성값은 1부터 1,000,000,000까지의 양의 정수로 나타내고, 알칼리성 용액의 특성값은 -1부터 -1,000,000,000까지의 음의 정수로 나타낸다.</p>
+<p>같은 양의 두 용액을 혼합한 용액의 특성값은 혼합에 사용된 각 용액의 특성값의 합으로 정의한다. 이 연구소에서는 같은 양의 두 용액을 혼합하여 특성값이 0에 가장 가까운 용액을 만들려고 한다.</p>
+<p>예를 들어, 주어진 용액들의 특성값이 [-2, 4, -99, -1, 98]인 경우에는 특성값이 -99인 용액과 특성값이 98인 용액을 혼합하면 특성값이 -1인 용액을 만들 수 있고, 이 용액이 특성값이 0에 가장 가까운 용액이다. 참고로, 두 종류의 알칼리성 용액만으로나 혹은 두 종류의 산성 용액만으로 특성값이 0에 가장 가까운 혼합 용액을 만드는 경우도 존재할 수 있다.</p>
+<p>산성 용액과 알칼리성 용액의 특성값이 주어졌을 때, 이 중 두 개의 서로 다른 용액을 혼합하여 특성값이 0에 가장 가까운 용액을 만들어내는 두 용액을 찾는 프로그램을 작성하시오.</p>
+<h4 id="-">풀이</h4>
+<p>우선 정렬을 통해 배열에 담긴 모든 용액을 오름차순으로 만든다.</p>
+<p> 그 다음 끝 두 점에서부터 시작해서 두 용액의 합을 통해 특성값을 계산한다.</p>
+<p>현재 두 점이 A,B라 하면</p>
+<p>A+B 의 값이 0보다 큰 지 작은지에 따라 옮겨야 하는 점이 다르다.</p>
+<p>만약 A+B 값이 0보다 큰 경우 B의 값을 한 칸 내려야 한다.</p>
+<p>어짜피 B와 다른 값의 조합은 A+B보다 크기 때문에 더 낮은 특성값을 얻을 수 없기 때문이다.</p>
+<p>반대로 0보다 작은 경우 A의 값을 한 칸 올리면 된다.</p>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> java.io.<span class="hljs-keyword">BufferedReader</span>;
+<span class="hljs-keyword">import</span> java.io.IOException;
+<span class="hljs-keyword">import</span> java.io.InputStreamReader;
+<span class="hljs-keyword">import</span> java.util.Arrays;
+
+<span class="hljs-keyword">public</span> class Main {
+    <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> n;
+    <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span>[] liquids;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> main(<span class="hljs-keyword">String</span>[] args) <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-keyword">BufferedReader</span> br = <span class="hljs-keyword">new</span> <span class="hljs-keyword">BufferedReader</span>(<span class="hljs-keyword">new</span> InputStreamReader(System.in));
+
+        n = Integer.parseInt(br.readLine());
+        liquids = <span class="hljs-keyword">new</span> <span class="hljs-built_in">int</span>[n];
+
+        <span class="hljs-keyword">String</span>[] inputArr = br.readLine().<span class="hljs-built_in">split</span>(<span class="hljs-string">" "</span>);
+
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; n; i++)
+            liquids[i] = Integer.parseInt(inputArr[i]);
+
+        Arrays.<span class="hljs-built_in">sort</span>(liquids);
+
+        <span class="hljs-built_in">int</span>[] res = getLowestSum();
+        System.out.printf(<span class="hljs-string">"%d %d"</span>,res[<span class="hljs-number">0</span>],res[<span class="hljs-number">1</span>]);
+    }
+
+    <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span>[] getLowestSum() {
+        <span class="hljs-built_in">int</span> a = <span class="hljs-number">0</span>;
+        <span class="hljs-built_in">int</span> b = liquids.length - <span class="hljs-number">1</span>;
+        <span class="hljs-built_in">int</span>[] res = <span class="hljs-keyword">new</span> <span class="hljs-built_in">int</span>[<span class="hljs-number">2</span>];
+        <span class="hljs-built_in">int</span> current = Integer.MAX_VALUE;
+
+        <span class="hljs-keyword">while</span> (a &lt; b) {
+            <span class="hljs-built_in">int</span> tmp = Math.<span class="hljs-built_in">abs</span>(liquids[a] + liquids[b]);
+            <span class="hljs-keyword">if</span> (tmp &lt; current) {
+                current = tmp;
+                res[<span class="hljs-number">0</span>] = liquids[a];
+                res[<span class="hljs-number">1</span>] = liquids[b];
+            }
+            <span class="hljs-keyword">if</span> (liquids[a] + liquids[b] == <span class="hljs-number">0</span>)
+                <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">int</span>[] {liquids[a],liquids[b]};
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (liquids[a] + liquids[b] &lt; <span class="hljs-number">0</span>)
+                a++;
+            <span class="hljs-keyword">else</span>
+                b--;
+        }
+        <span class="hljs-keyword">return</span> res;
+    }
+}
+</code></pre>
+
+
+  </div>
+</body>
+</html>
