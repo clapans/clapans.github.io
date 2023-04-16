@@ -29,7 +29,7 @@
 
     a {
       color : black;
-      font-size: 18px;
+      font-size: 20px;
       font-weight: bold;
       text-decoration-line: none;
       margin-top : 7px;
@@ -63,7 +63,7 @@
     }
 
     .write-container {
-      height : 486.8px;
+      height : 506px;
     }
 
     #searchBarCtnr {
@@ -111,10 +111,82 @@
       background-color: lightgray;
       border-radius: 20px;
     }
+
+    #ct {
+      border : 0px solid black;
+      padding: 8px 18px;
+      background-color: white;
+    }
+
+    @font-face {
+      font-family: 'Dovemayo-Medium';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.0/Dovemayo-Medium.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    body {
+      font-family: 'Dovemayo-Medium';
+    }
+
+    .category-item {
+      padding: 8px 18px;
+      border:1px solid rgb(209, 207, 207);
+      border-radius: 30px;
+      margin-top : 7px;
+    }
+
+    .addFilter {
+      background-color: rgb(96, 96, 96);
+      border : 0px solid black;
+      color: white;
+    }
+
+    .select-filter {
+      padding: 11px 20px;
+      border:0px solid black;
+      background-color: rgb(169, 188, 255);
+      border-radius: 30px;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top : 20px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding : 3px 5px;
+      font-size: 13px;
+      background-color: rgb(240,240,240);
+    }
   </style>
 </head>
 <body>
   <div class="whole" style="width: 100%; height: 100%">
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content" style="margin-top: 20vh;">
+          <div class="modal-header">
+            <h3 class="m-auto">카테고리를 골라주세요</h3>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16" data-bs-dismiss="modal" aria-label="Close">
+              <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+            </svg>
+          </div>
+          <div class="modal-body">
+            <div class="container text-center">
+              <button class="category-item">Java</button>
+              <button class="category-item">Spring</button>
+              <button class="category-item">알고리즘</button>
+              <button class="category-item">DB</button>
+              <button class="category-item">운영체제</button>
+            </div>
+            <div class="container text-center">
+              <button class="select-filter" data-bs-dismiss="modal" aria-label="Close">선택완료</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <div class="md-container">
       <div style="width:100%; height: 150px;"></div>
       <div class="container searchBarCtnr" id="searchBarCtnr">
@@ -127,122 +199,125 @@
       </div>
       <div class="d-flex justify-content-between context-container"> 
         <div class="nav">
-          <div class="nav-link" id="rc">최신글</div>
-          <div class="nav-link deactive-page" id="ct">카테고리</div>
+          <!--<div class="nav-link" id="rc">최신글</div>-->
+          <button class="nav-link" id="ct" data-bs-toggle="modal" data-bs-target="#filterModal">
+            카테고리 필터 +
+          </button>
         </div>
         <div class="nav" style="align-items: center;">
-          <div class="fw-bold nav-link" style="font-size: 18px">총 포스트 수 </div>
+          <div>📁</div>
+          <div class="fw-bold nav-link" style="font-size: 18px; padding-left : 5px; padding-right : 5px">총 포스트 수 </div>
           <div class="totalWrite nav-link" style="font-size: 18px; font-weight: normal !important"></div>
         </div>
       </div>
       <div class="recent">
         <div class="write-container">
-          <div class="write d-none">
+          <div class="write d-none Java 알고리즘">
             <hr>
             <a href="./230413.html">14502번 - 연구소</a>
             <div class="date">2023. 4. 13</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java 알고리즘">
             <hr>
             <a href="./230412.html">9184번 - 신나는 함수 실행</a>
             <div class="date">2023. 4. 12</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java 알고리즘">
             <hr>
             <a href="./230406.html">2470번 - 두 용액</a>
             <div class="date">2023. 4. 6</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java 알고리즘">
             <hr>
             <a href="./230405.html">14425번 - 문자열 집합</a>
             <div class="date">2023. 4. 5</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Spring DB">
             <hr>
             <a href="./230403.html">트랜잭션이란?</a>
             <div class="date">2023. 4. 3</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java 알고리즘">
             <hr>
             <a href="./230330.html">13913번 - 숨바꼭질 4</a>
             <div class="date">2023. 3. 30</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java 알고리즘">
             <hr>
             <a href="./230329.html">1783번 - 병든 나이트</a>
             <div class="date">2023. 3. 29</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java 알고리즘">
             <hr>
             <a href="./230323-2.html">5525번 - IOIOI</a>
             <div class="date">2023. 3. 23</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java 알고리즘">
             <hr>
             <a href="./230323.html">1922번 - 네트워크 연결</a>
             <div class="date">2023. 3. 23</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java">
             <hr>
             <a href="./230318.html">가변인자와 오버로딩</a>
             <div class="date">2023. 3. 18</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java 알고리즘">
             <hr>
             <a href="./230317.html">1106번 - 호텔</a>
             <div class="date">2023. 3. 17</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java 알고리즘">
             <hr>
             <a href="./230316.html">3085번 - 사탕 게임</a>
             <div class="date">2023. 3. 16</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java 알고리즘">
             <hr>
             <a href="./230309-2.html">3273번 - 두 수의 합</a>
             <div class="date">2023. 3. 9</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java 알고리즘">
             <hr>
             <a href="./230309.html">11497번 - 통나무 건너뛰기</a>
             <div class="date">2023. 3. 9</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java">
             <hr>
             <a href="./230306.html">클래스 메서드와 인스턴스 메서드</a>
             <div class="date">2023. 3. 6</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java Spring">
             <hr>
             <a href="./230305.html">JVM 메모리 구조</a>
             <div class="date">2023. 3. 5</div>
-          </div>
-          <div class="write d-none">
+          </div> 
+          <div class="write d-none Java 알고리즘 Spring">
             <hr>
             <a href="./230303.html">17825번 - 주사위 윷놀이</a>
             <div class="date">2023. 3. 3</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java Spring">
             <hr>
             <a href="./230225.html">클래스와 객체</a>
             <div class="date">2023. 2. 25</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java 알고리즘 Spring">
             <hr>
             <a href="./230223.html">1613번 - 역사</a>
             <div class="date">2023. 2. 23</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Java 알고리즘 Spring">
             <hr>
             <a href="./230222.html">17837번 - 새로운 게임 2</a>
             <div class="date">2023. 2. 22</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Spring">
             <hr>
             <a href="./230219.html">서블릿-예제</a>
             <div class="date">2023. 2. 19</div>
           </div>
-          <div class="write d-none">
+          <div class="write d-none Spring">
             <hr>
             <a href="./230217.html">서블릿</a>
             <div class="date">2023. 2. 17</div>
