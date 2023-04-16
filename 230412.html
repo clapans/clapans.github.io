@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>9184번 - 신나는 함수 실행</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <style>
+    .md-container {
+      width : min(775px, 90vw);
+      margin :auto;
+    }
+
+    pre {
+      border: 0.5px solid lightgray;
+      background-color:  #f7f7f7;
+      margin-top : 30px;
+      margin-bottom : 30px;
+    }
+
+    img {
+      width: 100%;
+      margin-top : 25px;
+      margin-bottom : 25px;
+    }
+
+    h2 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+    h3 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h4 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h5 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="md-container">
+    <h2 class="fw-bold">9184번 - 신나는 함수 실행</h2>
+<h4 id="-">분류 : 재귀, 다이나믹 프로그래밍</h4>
+<h4 id="-">문제</h4>
+<p>재귀 호출만 생각하면 신이 난다! 아닌가요?</p>
+<p>다음과 같은 재귀함수 w(a, b, c)가 있다.</p>
+<pre><code><span class="hljs-keyword">if</span> <span class="hljs-selector-tag">a</span> &lt;= <span class="hljs-number">0</span> or <span class="hljs-selector-tag">b</span> &lt;= <span class="hljs-number">0</span> or c &lt;= <span class="hljs-number">0</span>, then w(<span class="hljs-selector-tag">a</span>, <span class="hljs-selector-tag">b</span>, c) returns:
+ <span class="hljs-number">1</span>
+<span class="hljs-keyword">if</span> <span class="hljs-selector-tag">a</span> &gt; <span class="hljs-number">20</span> or <span class="hljs-selector-tag">b</span> &gt; <span class="hljs-number">20</span> or c &gt; <span class="hljs-number">20</span>, then w(<span class="hljs-selector-tag">a</span>, <span class="hljs-selector-tag">b</span>, c) returns:
+ w(<span class="hljs-number">20</span>, <span class="hljs-number">20</span>, <span class="hljs-number">20</span>)
+<span class="hljs-keyword">if</span> <span class="hljs-selector-tag">a</span> &lt; <span class="hljs-selector-tag">b</span> and <span class="hljs-selector-tag">b</span> &lt; c, then w(<span class="hljs-selector-tag">a</span>, <span class="hljs-selector-tag">b</span>, c) returns:
+ w(<span class="hljs-selector-tag">a</span>, <span class="hljs-selector-tag">b</span>, c-<span class="hljs-number">1</span>) + w(<span class="hljs-selector-tag">a</span>, b-<span class="hljs-number">1</span>, c-<span class="hljs-number">1</span>) - w(<span class="hljs-selector-tag">a</span>, b-<span class="hljs-number">1</span>, c)
+otherwise it returns:
+ w(a-<span class="hljs-number">1</span>, <span class="hljs-selector-tag">b</span>, c) + w(a-<span class="hljs-number">1</span>, b-<span class="hljs-number">1</span>, c) + w(a-<span class="hljs-number">1</span>, <span class="hljs-selector-tag">b</span>, c-<span class="hljs-number">1</span>) - w(a-<span class="hljs-number">1</span>, b-<span class="hljs-number">1</span>, c-<span class="hljs-number">1</span>)
+</code></pre><p>위의 함수를 구현하는 것은 매우 쉽다. 하지만, 그대로 구현하면 값을 구하는데 매우 오랜 시간이 걸린다. (예를 들면, a=15, b=15, c=15)</p>
+<p>a, b, c가 주어졌을 때, w(a, b, c)를 출력하는 프로그램을 작성하시오.</p>
+<h4 id="-">풀이</h4>
+<p>수도코드를 보면 함수가 재귀적으로 이루어져 있는 것을 알 수 있다.</p>
+<p>그런데 한 번에 3,4번 씩 재귀를 들어가기 때문에 자칫하면 시간초과가 일어날 수 있어 다이나믹 프로그래밍을 이용해 이미 매개변수에 대해서 함수를 호출한 적이 있다면 배열에 저장되어 있는 값을 return하고 재귀를 추가로 진행하지 않는 것으로 이를 해결했다.</p>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> java.io.BufferedReader;
+<span class="hljs-keyword">import</span> java.io.IOException;
+<span class="hljs-keyword">import</span> java.io.InputStreamReader;
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Main</span> </span>{
+    <span class="hljs-keyword">static</span> int[][][] dp = new int[<span class="hljs-number">21</span>][<span class="hljs-number">21</span>][<span class="hljs-number">21</span>];
+    <span class="hljs-keyword">static</span> boolean[][][] visited = new boolean[<span class="hljs-number">21</span>][<span class="hljs-number">21</span>][<span class="hljs-number">21</span>];
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> void main(<span class="hljs-type">String</span>[] args) <span class="hljs-keyword">throws</span> <span class="hljs-type">IOException</span> {
+        <span class="hljs-type">BufferedReader</span> br = new <span class="hljs-type">BufferedReader</span>(new <span class="hljs-type">InputStreamReader</span>(<span class="hljs-type">System</span>.<span class="hljs-keyword">in</span>));
+
+        <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) {
+            <span class="hljs-type">String</span>[] inputStr = br.<span class="hljs-built_in">readLine</span>().<span class="hljs-built_in">split</span>(<span class="hljs-string">" "</span>);
+            int[] inputs = new int[<span class="hljs-number">3</span>];
+            <span class="hljs-keyword">for</span> (int i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; i++)
+                inputs[i] = <span class="hljs-type">Integer</span>.parseInt(inputStr[i]);
+            <span class="hljs-keyword">if</span> (inputs[<span class="hljs-number">0</span>] == -<span class="hljs-number">1</span> &amp;&amp; inputs[<span class="hljs-number">1</span>] ==-<span class="hljs-number">1</span> &amp;&amp; inputs[<span class="hljs-number">2</span>] == -<span class="hljs-number">1</span>)
+                <span class="hljs-keyword">break</span>;
+            <span class="hljs-type">System</span>.out.printf(<span class="hljs-string">"w(%d, %d, %d) = %d\n"</span>,inputs[<span class="hljs-number">0</span>],inputs[<span class="hljs-number">1</span>],inputs[<span class="hljs-number">2</span>],w(inputs[<span class="hljs-number">0</span>],inputs[<span class="hljs-number">1</span>],inputs[<span class="hljs-number">2</span>]));
+        }
+    }
+
+    <span class="hljs-keyword">static</span> int w(int a, int b, int <span class="hljs-built_in">c</span>) {
+        <span class="hljs-keyword">if</span> (a &lt;= <span class="hljs-number">0</span> || b &lt;= <span class="hljs-number">0</span> || <span class="hljs-built_in">c</span> &lt;= <span class="hljs-number">0</span>)
+            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (a &gt; <span class="hljs-number">20</span> || b &gt; <span class="hljs-number">20</span> || <span class="hljs-built_in">c</span> &gt; <span class="hljs-number">20</span>)
+            <span class="hljs-keyword">return</span> w(<span class="hljs-number">20</span>,<span class="hljs-number">20</span>,<span class="hljs-number">20</span>);
+        <span class="hljs-keyword">if</span> (visited[a][b][<span class="hljs-built_in">c</span>])
+            <span class="hljs-keyword">return</span> dp[a][b][<span class="hljs-built_in">c</span>];
+        visited[a][b][<span class="hljs-built_in">c</span>] = <span class="hljs-literal">true</span>;
+        <span class="hljs-keyword">if</span> (a &lt; b &amp;&amp; b &lt; <span class="hljs-built_in">c</span>)
+            dp[a][b][<span class="hljs-built_in">c</span>] = w(a, b, <span class="hljs-built_in">c</span>-<span class="hljs-number">1</span>) + w(a, b-<span class="hljs-number">1</span>, <span class="hljs-built_in">c</span>-<span class="hljs-number">1</span>) - w(a, b-<span class="hljs-number">1</span>, <span class="hljs-built_in">c</span>);
+        <span class="hljs-keyword">else</span>
+            dp[a][b][<span class="hljs-built_in">c</span>] = w(a-<span class="hljs-number">1</span>, b, <span class="hljs-built_in">c</span>) + w(a-<span class="hljs-number">1</span>, b-<span class="hljs-number">1</span>, <span class="hljs-built_in">c</span>) + w(a-<span class="hljs-number">1</span>, b, <span class="hljs-built_in">c</span>-<span class="hljs-number">1</span>) - w(a-<span class="hljs-number">1</span>, b-<span class="hljs-number">1</span>, <span class="hljs-built_in">c</span>-<span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> dp[a][b][<span class="hljs-built_in">c</span>];
+    }
+}
+</code></pre>
+
+
+
+  </div>
+</body>
+</html>
