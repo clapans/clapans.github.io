@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4485번 - 녹색 옷을 입은 애가 젤다지?</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <style>
+    .md-container {
+      width : min(775px, 90vw);
+      margin :auto;
+    }
+
+    pre {
+      border: 0.5px solid lightgray;
+      background-color:  #f7f7f7;
+      margin-top : 30px;
+      margin-bottom : 30px;
+    }
+
+    img {
+      width: 100%;
+      margin-top : 25px;
+      margin-bottom : 25px;
+    }
+
+    h2 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+    h3 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h4 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h5 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+    @font-face {
+      font-family: 'Dovemayo-Medium';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.0/Dovemayo-Medium.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    body {
+      font-family: 'Dovemayo-Medium';
+    }
+
+    p {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="md-container">
+    <h2 class="fw-bold">4485번 - 녹색 옷을 입은 애가 젤다지?</h2>
+<h4 id="-">분류 : 다익스트라</h4>
+<h4 id="-">문제</h4>
+<p>젤다의 전설 게임에서 화폐의 단위는 루피(rupee)다. 그런데 간혹 &#39;도둑루피&#39;라 불리는 검정색 루피도 존재하는데, 이걸 획득하면 오히려 소지한 루피가 감소하게 된다!</p>
+<p>젤다의 전설 시리즈의 주인공, 링크는 지금 도둑루피만 가득한 N x N 크기의 동굴의 제일 왼쪽 위에 있다. [0][0]번 칸이기도 하다. 왜 이런 곳에 들어왔냐고 묻는다면 밖에서 사람들이 자꾸 &quot;젤다의 전설에 나오는 녹색 애가 젤다지?&quot;라고 물어봤기 때문이다. 링크가 녹색 옷을 입은 주인공이고 젤다는 그냥 잡혀있는 공주인데, 게임 타이틀에 젤다가 나와있다고 자꾸 사람들이 이렇게 착각하니까 정신병에 걸릴 위기에 놓인 것이다.</p>
+<p>하여튼 젤다...아니 링크는 이 동굴의 반대편 출구, 제일 오른쪽 아래 칸인 [N-1][N-1]까지 이동해야 한다. 동굴의 각 칸마다 도둑루피가 있는데, 이 칸을 지나면 해당 도둑루피의 크기만큼 소지금을 잃게 된다. 링크는 잃는 금액을 최소로 하여 동굴 건너편까지 이동해야 하며, 한 번에 상하좌우 인접한 곳으로 1칸씩 이동할 수 있다.</p>
+<p>링크가 잃을 수밖에 없는 최소 금액은 얼마일까?</p>
+<h4 id="-">풀이</h4>
+<p>한 지점에서 목표 지점으로 가는 데에 들어가는 비용을 구하는 문제이다.</p>
+<p>비용이 없는 간선이라면 bfs를 사용하는 것이 적합하겠지만 비용이 있는 간선이기 때문에 다익스트라를 이용해서 풀이하였다.</p>
+<p>비용과 목적지를 멤버변수로 갖는 Node 클래스를 정의하고 Comparable 인터페이스의 compareTo 메서드를 재정의하면서 코스트가 가장 낮은 노드가 우선순위 큐에서 뽑히도록 설계하였다.</p>
+<p>dp를 이용하여 각 노드에 도착했을 때마다 비용을 갱신해주고 우선순위 큐에서 뽑은 노드의 비용이 dp의 값보다 크면 continue 해주었다.</p>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> java.util.Arrays;
+<span class="hljs-keyword">import</span> java.util.PriorityQueue;
+<span class="hljs-keyword">import</span> java.util.Scanner;
+
+<span class="hljs-keyword">class</span> Node implements Comparable&lt;Node&gt;{
+    <span class="hljs-keyword">int</span> x,y,cost;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Node</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x, <span class="hljs-keyword">int</span> y, <span class="hljs-keyword">int</span> cost)</span> </span>{
+        <span class="hljs-keyword">this</span>.x = x;
+        <span class="hljs-keyword">this</span>.y = y;
+        <span class="hljs-keyword">this</span>.cost = cost;
+    }
+
+    @<span class="hljs-function">Override
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">compareTo</span><span class="hljs-params">(Node o)</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.cost - o.cost;
+    }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> Main {
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[][] arr,dp;
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] dx = {<span class="hljs-number">1</span>,<span class="hljs-number">-1</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>};
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] dy = {<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">-1</span>};
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> n;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>{
+        Scanner sc = <span class="hljs-keyword">new</span> Scanner(System.in);
+        <span class="hljs-keyword">int</span> cnt = <span class="hljs-number">1</span>;
+
+        <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) {
+            n = sc.nextInt();
+            <span class="hljs-keyword">if</span> (n == <span class="hljs-number">0</span>) <span class="hljs-keyword">break</span>;
+
+            arr = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[n][n];
+
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; n; i++)
+                <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; n; j++)
+                    arr[i][j] = sc.nextInt();
+
+            System.out.<span class="hljs-built_in">printf</span>(<span class="hljs-string">"Problem %d: %d\n"</span>,cnt,game());
+            cnt++;
+        }
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> <span class="hljs-title">game</span><span class="hljs-params">()</span> </span>{
+        PriorityQueue&lt;Node&gt; <span class="hljs-built_in">queue</span> = <span class="hljs-keyword">new</span> PriorityQueue&lt;&gt;();
+        <span class="hljs-built_in">queue</span>.add(<span class="hljs-keyword">new</span> Node(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,arr[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]));
+        dp = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[n][n];
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; n; i++)
+            Arrays.fill(dp[i],(<span class="hljs-keyword">int</span>)<span class="hljs-number">1e9</span>);
+        dp[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>] = arr[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>];
+
+        <span class="hljs-keyword">while</span> (<span class="hljs-built_in">queue</span>.size() &gt; <span class="hljs-number">0</span>) {
+            Node node = <span class="hljs-built_in">queue</span>.poll();
+            <span class="hljs-keyword">if</span> (node.x == n<span class="hljs-number">-1</span> &amp;&amp; node.y == n<span class="hljs-number">-1</span>)
+                <span class="hljs-keyword">break</span>;
+            <span class="hljs-keyword">if</span> (node.cost &gt; dp[node.x][node.y])
+                <span class="hljs-keyword">continue</span>;
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> t = <span class="hljs-number">0</span>; t &lt; <span class="hljs-number">4</span>; t++) {
+                <span class="hljs-keyword">int</span> nx = node.x + dx[t];
+                <span class="hljs-keyword">int</span> ny = node.y + dy[t];
+
+                <span class="hljs-keyword">if</span> (<span class="hljs-number">0</span> &lt;= nx &amp;&amp; nx &lt; n &amp;&amp; <span class="hljs-number">0</span> &lt;= ny &amp;&amp; ny &lt; n) {
+                    <span class="hljs-keyword">if</span> (node.cost + arr[nx][ny] &lt; dp[nx][ny]) {
+                        dp[nx][ny] = node.cost + arr[nx][ny];
+                        <span class="hljs-built_in">queue</span>.add(<span class="hljs-keyword">new</span> Node(nx, ny, node.cost + arr[nx][ny]));
+                    }
+                }
+            }
+        }
+
+        <span class="hljs-keyword">return</span> dp[n<span class="hljs-number">-1</span>][n<span class="hljs-number">-1</span>];
+    }
+}
+</code></pre>
+
+
+  </div>
+</body>
+</html>
