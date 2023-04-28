@@ -9,58 +9,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-  <style>
-    .md-container {
-      width : min(775px, 90vw);
-      margin :auto;
-    }
-
-    pre {
-      border: 0.5px solid lightgray;
-      background-color:  #f7f7f7;
-      margin-top : 30px;
-      margin-bottom : 30px;
-    }
-
-    img {
-      width: 100%;
-      margin-top : 25px;
-      margin-bottom : 25px;
-    }
-
-    h2 {
-      margin-top : 40px;
-      margin-bottom : 40px;
-    }
-
-    h3 {
-      margin-top : 40px;
-      margin-bottom : 40px;
-    }
-    h4 {
-      margin-top : 40px;
-      margin-bottom : 40px;
-    }
-    h5 {
-      margin-top : 40px;
-      margin-bottom : 40px;
-    }
-
-    @font-face {
-      font-family: 'omyu_pretty';
-      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/omyu_pretty.woff2') format('woff2');
-      font-weight: normal;
-      font-style: normal;
-    }
-
-    body {
-      font-family: 'omyu_pretty';
-    }
-
-    p {
-      font-size: 18px;
-    }
-  </style>
+  <link href="./static/css/main.css" rel="stylesheet">
 </head>
 <body>
   <div class="md-container">
@@ -82,44 +31,45 @@ otherwise it returns:
 <h4 id="-">풀이</h4>
 <p>수도코드를 보면 함수가 재귀적으로 이루어져 있는 것을 알 수 있다.</p>
 <p>그런데 한 번에 3,4번 씩 재귀를 들어가기 때문에 자칫하면 시간초과가 일어날 수 있어 다이나믹 프로그래밍을 이용해 이미 매개변수에 대해서 함수를 호출한 적이 있다면 배열에 저장되어 있는 값을 return하고 재귀를 추가로 진행하지 않는 것으로 이를 해결했다.</p>
-<pre><code class="lang-java"><span class="hljs-keyword">import</span> java.io.BufferedReader;
-<span class="hljs-keyword">import</span> java.io.IOException;
-<span class="hljs-keyword">import</span> java.io.InputStreamReader;
-
-<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Main</span> </span>{
-    <span class="hljs-keyword">static</span> int[][][] dp = new int[<span class="hljs-number">21</span>][<span class="hljs-number">21</span>][<span class="hljs-number">21</span>];
-    <span class="hljs-keyword">static</span> boolean[][][] visited = new boolean[<span class="hljs-number">21</span>][<span class="hljs-number">21</span>][<span class="hljs-number">21</span>];
-
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> void main(<span class="hljs-type">String</span>[] args) <span class="hljs-keyword">throws</span> <span class="hljs-type">IOException</span> {
-        <span class="hljs-type">BufferedReader</span> br = new <span class="hljs-type">BufferedReader</span>(new <span class="hljs-type">InputStreamReader</span>(<span class="hljs-type">System</span>.<span class="hljs-keyword">in</span>));
-
-        <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) {
-            <span class="hljs-type">String</span>[] inputStr = br.<span class="hljs-built_in">readLine</span>().<span class="hljs-built_in">split</span>(<span class="hljs-string">" "</span>);
-            int[] inputs = new int[<span class="hljs-number">3</span>];
-            <span class="hljs-keyword">for</span> (int i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; i++)
-                inputs[i] = <span class="hljs-type">Integer</span>.parseInt(inputStr[i]);
-            <span class="hljs-keyword">if</span> (inputs[<span class="hljs-number">0</span>] == -<span class="hljs-number">1</span> &amp;&amp; inputs[<span class="hljs-number">1</span>] ==-<span class="hljs-number">1</span> &amp;&amp; inputs[<span class="hljs-number">2</span>] == -<span class="hljs-number">1</span>)
-                <span class="hljs-keyword">break</span>;
-            <span class="hljs-type">System</span>.out.printf(<span class="hljs-string">"w(%d, %d, %d) = %d\n"</span>,inputs[<span class="hljs-number">0</span>],inputs[<span class="hljs-number">1</span>],inputs[<span class="hljs-number">2</span>],w(inputs[<span class="hljs-number">0</span>],inputs[<span class="hljs-number">1</span>],inputs[<span class="hljs-number">2</span>]));
-        }
-    }
-
-    <span class="hljs-keyword">static</span> int w(int a, int b, int <span class="hljs-built_in">c</span>) {
-        <span class="hljs-keyword">if</span> (a &lt;= <span class="hljs-number">0</span> || b &lt;= <span class="hljs-number">0</span> || <span class="hljs-built_in">c</span> &lt;= <span class="hljs-number">0</span>)
-            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (a &gt; <span class="hljs-number">20</span> || b &gt; <span class="hljs-number">20</span> || <span class="hljs-built_in">c</span> &gt; <span class="hljs-number">20</span>)
-            <span class="hljs-keyword">return</span> w(<span class="hljs-number">20</span>,<span class="hljs-number">20</span>,<span class="hljs-number">20</span>);
-        <span class="hljs-keyword">if</span> (visited[a][b][<span class="hljs-built_in">c</span>])
-            <span class="hljs-keyword">return</span> dp[a][b][<span class="hljs-built_in">c</span>];
-        visited[a][b][<span class="hljs-built_in">c</span>] = <span class="hljs-literal">true</span>;
-        <span class="hljs-keyword">if</span> (a &lt; b &amp;&amp; b &lt; <span class="hljs-built_in">c</span>)
-            dp[a][b][<span class="hljs-built_in">c</span>] = w(a, b, <span class="hljs-built_in">c</span>-<span class="hljs-number">1</span>) + w(a, b-<span class="hljs-number">1</span>, <span class="hljs-built_in">c</span>-<span class="hljs-number">1</span>) - w(a, b-<span class="hljs-number">1</span>, <span class="hljs-built_in">c</span>);
-        <span class="hljs-keyword">else</span>
-            dp[a][b][<span class="hljs-built_in">c</span>] = w(a-<span class="hljs-number">1</span>, b, <span class="hljs-built_in">c</span>) + w(a-<span class="hljs-number">1</span>, b-<span class="hljs-number">1</span>, <span class="hljs-built_in">c</span>) + w(a-<span class="hljs-number">1</span>, b, <span class="hljs-built_in">c</span>-<span class="hljs-number">1</span>) - w(a-<span class="hljs-number">1</span>, b-<span class="hljs-number">1</span>, <span class="hljs-built_in">c</span>-<span class="hljs-number">1</span>);
-        <span class="hljs-keyword">return</span> dp[a][b][<span class="hljs-built_in">c</span>];
-    }
-}
-</code></pre>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">io</span><span class="op">.</span><span class="im">BufferedReader</span><span class="op">;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">io</span><span class="op">.</span><span class="im">IOException</span><span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">io</span><span class="op">.</span><span class="im">InputStreamReader</span><span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Main <span class="op">{</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">int</span><span class="op">[][][]</span> dp <span class="op">=</span> <span class="kw">new</span> <span class="dt">int</span><span class="op">[</span><span class="dv">21</span><span class="op">][</span><span class="dv">21</span><span class="op">][</span><span class="dv">21</span><span class="op">];</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">boolean</span><span class="op">[][][]</span> visited <span class="op">=</span> <span class="kw">new</span> <span class="dt">boolean</span><span class="op">[</span><span class="dv">21</span><span class="op">][</span><span class="dv">21</span><span class="op">][</span><span class="dv">21</span><span class="op">];</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="kw">throws</span> <span class="bu">IOException</span> <span class="op">{</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">BufferedReader</span> br <span class="op">=</span> <span class="kw">new</span> <span class="bu">BufferedReader</span><span class="op">(</span><span class="kw">new</span> <span class="bu">InputStreamReader</span><span class="op">(</span><span class="bu">System</span><span class="op">.</span><span class="fu">in</span><span class="op">));</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="op">(</span><span class="kw">true</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>            <span class="bu">String</span><span class="op">[]</span> inputStr <span class="op">=</span> br<span class="op">.</span><span class="fu">readLine</span><span class="op">().</span><span class="fu">split</span><span class="op">(</span><span class="st">&quot; &quot;</span><span class="op">);</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>            <span class="dt">int</span><span class="op">[]</span> inputs <span class="op">=</span> <span class="kw">new</span> <span class="dt">int</span><span class="op">[</span><span class="dv">3</span><span class="op">];</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">3</span><span class="op">;</span> i<span class="op">++)</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>                inputs<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>inputStr<span class="op">[</span>i<span class="op">]);</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>inputs<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> <span class="op">-</span><span class="dv">1</span> <span class="op">&amp;&amp;</span> inputs<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">==-</span><span class="dv">1</span> <span class="op">&amp;&amp;</span> inputs<span class="op">[</span><span class="dv">2</span><span class="op">]</span> <span class="op">==</span> <span class="op">-</span><span class="dv">1</span><span class="op">)</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>            <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">printf</span><span class="op">(</span><span class="st">&quot;w(</span><span class="sc">%d</span><span class="st">, </span><span class="sc">%d</span><span class="st">, </span><span class="sc">%d</span><span class="st">) = </span><span class="sc">%d\n</span><span class="st">&quot;</span><span class="op">,</span>inputs<span class="op">[</span><span class="dv">0</span><span class="op">],</span>inputs<span class="op">[</span><span class="dv">1</span><span class="op">],</span>inputs<span class="op">[</span><span class="dv">2</span><span class="op">],</span><span class="fu">w</span><span class="op">(</span>inputs<span class="op">[</span><span class="dv">0</span><span class="op">],</span>inputs<span class="op">[</span><span class="dv">1</span><span class="op">],</span>inputs<span class="op">[</span><span class="dv">2</span><span class="op">]));</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">int</span> <span class="fu">w</span><span class="op">(</span><span class="dt">int</span> a<span class="op">,</span> <span class="dt">int</span> b<span class="op">,</span> <span class="dt">int</span> c<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>a <span class="op">&lt;=</span> <span class="dv">0</span> <span class="op">||</span> b <span class="op">&lt;=</span> <span class="dv">0</span> <span class="op">||</span> c <span class="op">&lt;=</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>a <span class="op">&gt;</span> <span class="dv">20</span> <span class="op">||</span> b <span class="op">&gt;</span> <span class="dv">20</span> <span class="op">||</span> c <span class="op">&gt;</span> <span class="dv">20</span><span class="op">)</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="fu">w</span><span class="op">(</span><span class="dv">20</span><span class="op">,</span><span class="dv">20</span><span class="op">,</span><span class="dv">20</span><span class="op">);</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>visited<span class="op">[</span>a<span class="op">][</span>b<span class="op">][</span>c<span class="op">])</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> dp<span class="op">[</span>a<span class="op">][</span>b<span class="op">][</span>c<span class="op">];</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>        visited<span class="op">[</span>a<span class="op">][</span>b<span class="op">][</span>c<span class="op">]</span> <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>a <span class="op">&lt;</span> b <span class="op">&amp;&amp;</span> b <span class="op">&lt;</span> c<span class="op">)</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>            dp<span class="op">[</span>a<span class="op">][</span>b<span class="op">][</span>c<span class="op">]</span> <span class="op">=</span> <span class="fu">w</span><span class="op">(</span>a<span class="op">,</span> b<span class="op">,</span> c<span class="op">-</span><span class="dv">1</span><span class="op">)</span> <span class="op">+</span> <span class="fu">w</span><span class="op">(</span>a<span class="op">,</span> b<span class="op">-</span><span class="dv">1</span><span class="op">,</span> c<span class="op">-</span><span class="dv">1</span><span class="op">)</span> <span class="op">-</span> <span class="fu">w</span><span class="op">(</span>a<span class="op">,</span> b<span class="op">-</span><span class="dv">1</span><span class="op">,</span> c<span class="op">);</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>            dp<span class="op">[</span>a<span class="op">][</span>b<span class="op">][</span>c<span class="op">]</span> <span class="op">=</span> <span class="fu">w</span><span class="op">(</span>a<span class="op">-</span><span class="dv">1</span><span class="op">,</span> b<span class="op">,</span> c<span class="op">)</span> <span class="op">+</span> <span class="fu">w</span><span class="op">(</span>a<span class="op">-</span><span class="dv">1</span><span class="op">,</span> b<span class="op">-</span><span class="dv">1</span><span class="op">,</span> c<span class="op">)</span> <span class="op">+</span> <span class="fu">w</span><span class="op">(</span>a<span class="op">-</span><span class="dv">1</span><span class="op">,</span> b<span class="op">,</span> c<span class="op">-</span><span class="dv">1</span><span class="op">)</span> <span class="op">-</span> <span class="fu">w</span><span class="op">(</span>a<span class="op">-</span><span class="dv">1</span><span class="op">,</span> b<span class="op">-</span><span class="dv">1</span><span class="op">,</span> c<span class="op">-</span><span class="dv">1</span><span class="op">);</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> dp<span class="op">[</span>a<span class="op">][</span>b<span class="op">][</span>c<span class="op">];</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+  
 
 
 

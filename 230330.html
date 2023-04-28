@@ -9,58 +9,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-  <style>
-    .md-container {
-      width : min(775px, 90vw);
-      margin :auto;
-    }
-
-    pre {
-      border: 0.5px solid lightgray;
-      background-color:  #f7f7f7;
-      margin-top : 30px;
-      margin-bottom : 30px;
-    }
-
-    img {
-      width: 100%;
-      margin-top : 25px;
-      margin-bottom : 25px;
-    }
-
-    h2 {
-      margin-top : 40px;
-      margin-bottom : 40px;
-    }
-
-    h3 {
-      margin-top : 40px;
-      margin-bottom : 40px;
-    }
-    h4 {
-      margin-top : 40px;
-      margin-bottom : 40px;
-    }
-    h5 {
-      margin-top : 40px;
-      margin-bottom : 40px;
-    }
-
-    @font-face {
-      font-family: 'omyu_pretty';
-      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/omyu_pretty.woff2') format('woff2');
-      font-weight: normal;
-      font-style: normal;
-    }
-
-    body {
-      font-family: 'omyu_pretty';
-    }
-
-    p {
-      font-size: 18px;
-    }
-  </style>
+  <link href="./static/css/main.css" rel="stylesheet">
 </head>
 <body>
   <div class="md-container">
@@ -79,72 +28,73 @@
 <p>일반적인 다익스트라랑 달리 이동하는 데에 드는 비용은 무조건 1씩 추가된다.</p>
 <p>이 말은 즉, 한 번 방문한 노드를 다른 경로로 다시 방문했을 때 비용이 더 쌀 수 있는 방법이 존재하지 않는다.</p>
 <p>따라서 임의의 한 노드가 가지는 이전 노드는 무조건 한개이다. 그러므로 int[] 배열은 이용해서 이전 노드를 LinkedList 같이 저장하고 이를 거꾸로 출력하면 된다..</p>
-<pre><code class="lang-java"><span class="hljs-keyword">import</span> java.io.BufferedReader;
-<span class="hljs-keyword">import</span> java.io.IOException;
-<span class="hljs-keyword">import</span> java.io.InputStreamReader;
-<span class="hljs-keyword">import</span> java.util.*;
-
-<span class="hljs-keyword">class</span> Node {
-    <span class="hljs-keyword">int</span> <span class="hljs-built_in">position</span>,cost;
-
-    <span class="hljs-keyword">public</span> Node(<span class="hljs-keyword">int</span> <span class="hljs-built_in">position</span>, <span class="hljs-keyword">int</span> cost) {
-        <span class="hljs-keyword">this</span>.<span class="hljs-built_in">position</span> = <span class="hljs-built_in">position</span>;
-        <span class="hljs-keyword">this</span>.cost = cost;
-    }
-
-}
-
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> Main {
-    <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> n, k;
-    <span class="hljs-keyword">static</span> Queue&lt;Node&gt; queue;
-    <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] dp;
-    <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] savePath;
-
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> main(<span class="hljs-keyword">String</span>[] args) throws IOException {
-        BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> InputStreamReader(System.in));
-        <span class="hljs-keyword">String</span>[] inputArr = br.readLine().split(<span class="hljs-string">" "</span>);
-        n = Integer.<span class="hljs-built_in">parseInt</span>(inputArr[<span class="hljs-number">0</span>]);
-        k = Integer.<span class="hljs-built_in">parseInt</span>(inputArr[<span class="hljs-number">1</span>]);
-        dp = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[<span class="hljs-number">100001</span>];
-        savePath = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[<span class="hljs-number">100001</span>];
-        Arrays.<span class="hljs-built_in">fill</span>(dp, (<span class="hljs-keyword">int</span>) <span class="hljs-number">1e9</span>);
-        queue = <span class="hljs-keyword">new</span> LinkedList&lt;&gt;();
-        queue.add(<span class="hljs-keyword">new</span> Node(n, <span class="hljs-number">0</span>));
-        System.out.<span class="hljs-built_in">println</span>(getFastestWay());
-        <span class="hljs-keyword">int</span> current = k;
-        List&lt;Integer&gt; res = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
-        <span class="hljs-built_in">while</span> (current != n) {
-            res.add(current);
-            current = savePath[current];
-        }
-        res.add(current);
-        <span class="hljs-built_in">for</span> (<span class="hljs-keyword">int</span> i = res.<span class="hljs-built_in">size</span>() - <span class="hljs-number">1</span>; i &gt; <span class="hljs-number">-1</span>; i--)
-            System.out.printf(<span class="hljs-string">"%d "</span>, res.<span class="hljs-built_in">get</span>(i));
-    }
-
-    <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> getFastestWay() {
-        <span class="hljs-built_in">while</span> (queue.<span class="hljs-built_in">size</span>() &gt; <span class="hljs-number">0</span>) {
-            Node node = queue.poll();
-            <span class="hljs-built_in">if</span> (node.<span class="hljs-built_in">position</span> == k)
-                <span class="hljs-built_in">return</span> node.cost;
-            addNode(node.<span class="hljs-built_in">position</span> - <span class="hljs-number">1</span>, node.cost, node.<span class="hljs-built_in">position</span>);
-            addNode(node.<span class="hljs-built_in">position</span> + <span class="hljs-number">1</span>, node.cost, node.<span class="hljs-built_in">position</span>);
-            addNode(node.<span class="hljs-built_in">position</span> * <span class="hljs-number">2</span>, node.cost, node.<span class="hljs-built_in">position</span>);
-        }
-        <span class="hljs-built_in">return</span> <span class="hljs-number">-1</span>;
-    }
-
-    <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> addNode(<span class="hljs-keyword">int</span> x, <span class="hljs-keyword">int</span> cost, <span class="hljs-keyword">int</span> pre) {
-        <span class="hljs-built_in">if</span> (<span class="hljs-number">0</span> &gt; x || x &gt; <span class="hljs-number">100000</span>)
-            <span class="hljs-built_in">return</span>;
-        <span class="hljs-built_in">if</span> (cost + <span class="hljs-number">1</span> &lt; dp[x]) {
-            dp[x] = cost + <span class="hljs-number">1</span>;
-            queue.add(<span class="hljs-keyword">new</span> Node(x, cost + <span class="hljs-number">1</span>));
-            savePath[x] = pre;
-        }
-    }
-}
-</code></pre>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">io</span><span class="op">.</span><span class="im">BufferedReader</span><span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">io</span><span class="op">.</span><span class="im">IOException</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">io</span><span class="op">.</span><span class="im">InputStreamReader</span><span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">util</span><span class="op">.*;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="bu">Node</span> <span class="op">{</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> position<span class="op">,</span>cost<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="bu">Node</span><span class="op">(</span><span class="dt">int</span> position<span class="op">,</span> <span class="dt">int</span> cost<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="fu">position</span> <span class="op">=</span> position<span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="fu">cost</span> <span class="op">=</span> cost<span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Main <span class="op">{</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">int</span> n<span class="op">,</span> k<span class="op">;</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="bu">Queue</span><span class="op">&lt;</span><span class="bu">Node</span><span class="op">&gt;</span> queue<span class="op">;</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">int</span><span class="op">[]</span> dp<span class="op">;</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">int</span><span class="op">[]</span> savePath<span class="op">;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="kw">throws</span> <span class="bu">IOException</span> <span class="op">{</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        <span class="bu">BufferedReader</span> br <span class="op">=</span> <span class="kw">new</span> <span class="bu">BufferedReader</span><span class="op">(</span><span class="kw">new</span> <span class="bu">InputStreamReader</span><span class="op">(</span><span class="bu">System</span><span class="op">.</span><span class="fu">in</span><span class="op">));</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        <span class="bu">String</span><span class="op">[]</span> inputArr <span class="op">=</span> br<span class="op">.</span><span class="fu">readLine</span><span class="op">().</span><span class="fu">split</span><span class="op">(</span><span class="st">&quot; &quot;</span><span class="op">);</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        n <span class="op">=</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>inputArr<span class="op">[</span><span class="dv">0</span><span class="op">]);</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        k <span class="op">=</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>inputArr<span class="op">[</span><span class="dv">1</span><span class="op">]);</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        dp <span class="op">=</span> <span class="kw">new</span> <span class="dt">int</span><span class="op">[</span><span class="dv">100001</span><span class="op">];</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        savePath <span class="op">=</span> <span class="kw">new</span> <span class="dt">int</span><span class="op">[</span><span class="dv">100001</span><span class="op">];</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Arrays</span><span class="op">.</span><span class="fu">fill</span><span class="op">(</span>dp<span class="op">,</span> <span class="op">(</span><span class="dt">int</span><span class="op">)</span> <span class="fl">1e9</span><span class="op">);</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        queue <span class="op">=</span> <span class="kw">new</span> <span class="bu">LinkedList</span><span class="op">&lt;&gt;();</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        queue<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="kw">new</span> <span class="bu">Node</span><span class="op">(</span>n<span class="op">,</span> <span class="dv">0</span><span class="op">));</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="fu">getFastestWay</span><span class="op">());</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> current <span class="op">=</span> k<span class="op">;</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>        <span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> res <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;();</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="op">(</span>current <span class="op">!=</span> n<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>            res<span class="op">.</span><span class="fu">add</span><span class="op">(</span>current<span class="op">);</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>            current <span class="op">=</span> savePath<span class="op">[</span>current<span class="op">];</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>        res<span class="op">.</span><span class="fu">add</span><span class="op">(</span>current<span class="op">);</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> res<span class="op">.</span><span class="fu">size</span><span class="op">()</span> <span class="op">-</span> <span class="dv">1</span><span class="op">;</span> i <span class="op">&gt;</span> <span class="op">-</span><span class="dv">1</span><span class="op">;</span> i<span class="op">--)</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>            <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">printf</span><span class="op">(</span><span class="st">&quot;</span><span class="sc">%d</span><span class="st"> &quot;</span><span class="op">,</span> res<span class="op">.</span><span class="fu">get</span><span class="op">(</span>i<span class="op">));</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">int</span> <span class="fu">getFastestWay</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="op">(</span>queue<span class="op">.</span><span class="fu">size</span><span class="op">()</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>            <span class="bu">Node</span> node <span class="op">=</span> queue<span class="op">.</span><span class="fu">poll</span><span class="op">();</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>node<span class="op">.</span><span class="fu">position</span> <span class="op">==</span> k<span class="op">)</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> node<span class="op">.</span><span class="fu">cost</span><span class="op">;</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>            <span class="fu">addNode</span><span class="op">(</span>node<span class="op">.</span><span class="fu">position</span> <span class="op">-</span> <span class="dv">1</span><span class="op">,</span> node<span class="op">.</span><span class="fu">cost</span><span class="op">,</span> node<span class="op">.</span><span class="fu">position</span><span class="op">);</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>            <span class="fu">addNode</span><span class="op">(</span>node<span class="op">.</span><span class="fu">position</span> <span class="op">+</span> <span class="dv">1</span><span class="op">,</span> node<span class="op">.</span><span class="fu">cost</span><span class="op">,</span> node<span class="op">.</span><span class="fu">position</span><span class="op">);</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>            <span class="fu">addNode</span><span class="op">(</span>node<span class="op">.</span><span class="fu">position</span> <span class="op">*</span> <span class="dv">2</span><span class="op">,</span> node<span class="op">.</span><span class="fu">cost</span><span class="op">,</span> node<span class="op">.</span><span class="fu">position</span><span class="op">);</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="op">-</span><span class="dv">1</span><span class="op">;</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">void</span> <span class="fu">addNode</span><span class="op">(</span><span class="dt">int</span> x<span class="op">,</span> <span class="dt">int</span> cost<span class="op">,</span> <span class="dt">int</span> pre<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span><span class="dv">0</span> <span class="op">&gt;</span> x <span class="op">||</span> x <span class="op">&gt;</span> <span class="dv">100000</span><span class="op">)</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>cost <span class="op">+</span> <span class="dv">1</span> <span class="op">&lt;</span> dp<span class="op">[</span>x<span class="op">])</span> <span class="op">{</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>            dp<span class="op">[</span>x<span class="op">]</span> <span class="op">=</span> cost <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>            queue<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="kw">new</span> <span class="bu">Node</span><span class="op">(</span>x<span class="op">,</span> cost <span class="op">+</span> <span class="dv">1</span><span class="op">));</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>            savePath<span class="op">[</span>x<span class="op">]</span> <span class="op">=</span> pre<span class="op">;</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+  
 
   </div>
 </body>
