@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>12891번 - DNA 비밀번호</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <style>
+    .md-container {
+      width : min(775px, 90vw);
+      margin :auto;
+    }
+
+    pre {
+      border: 0.5px solid lightgray;
+      background-color:  #f7f7f7;
+      margin-top : 30px;
+      margin-bottom : 30px;
+    }
+
+    img {
+      width: 100%;
+      margin-top : 25px;
+      margin-bottom : 25px;
+    }
+
+    h2 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+    h3 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h4 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+    h5 {
+      margin-top : 40px;
+      margin-bottom : 40px;
+    }
+
+    @font-face {
+      font-family: 'Dovemayo-Medium';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.0/Dovemayo-Medium.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'omyu_pretty';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/omyu_pretty.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    body {
+      font-family: 'omyu_pretty';
+    }
+
+    p {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="md-container">
+    <h2 class="fw-bold">12891번 - DNA 비밀번호</h2>
+<h4 id="-">분류 : 문자열,슬라이딩 윈도우</h4>
+<h4 id="-">문제</h4>
+<p>평소에 문자열을 가지고 노는 것을 좋아하는 민호는 DNA 문자열을 알게 되었다. DNA 문자열은 모든 문자열에 등장하는 문자가 {‘A’, ‘C’, ‘G’, ‘T’} 인 문자열을 말한다. 예를 들어 “ACKA”는 DNA 문자열이 아니지만 “ACCA”는 DNA 문자열이다. 이런 신비한 문자열에 완전히 매료된 민호는 임의의 DNA 문자열을 만들고 만들어진 DNA 문자열의 부분문자열을 비밀번호로 사용하기로 마음먹었다.</p>
+<p>하지만 민호는 이러한 방법에는 큰 문제가 있다는 것을 발견했다. 임의의 DNA 문자열의 부분문자열을 뽑았을 때 “AAAA”와 같이 보안에 취약한 비밀번호가 만들어 질 수 있기 때문이다. 그래서 민호는 부분문자열에서 등장하는 문자의 개수가 특정 개수 이상이여야 비밀번호로 사용할 수 있다는 규칙을 만들었다.</p>
+<p>임의의 DNA문자열이 “AAACCTGCCAA” 이고 민호가 뽑을 부분문자열의 길이를 4라고 하자. 그리고 부분문자열에 ‘A’ 는 1개 이상, ‘C’는 1개 이상, ‘G’는 1개 이상, ‘T’는 0개 이상이 등장해야 비밀번호로 사용할 수 있다고 하자. 이때 “ACCT” 는 ‘G’ 가 1 개 이상 등장해야 한다는 조건을 만족하지 못해 비밀번호로 사용하지 못한다. 하지만 “GCCA” 은 모든 조건을 만족하기 때문에 비밀번호로 사용할 수 있다.</p>
+<p>민호가 만든 임의의 DNA 문자열과 비밀번호로 사용할 부분분자열의 길이, 그리고 {‘A’, ‘C’, ‘G’, ‘T’} 가 각각 몇번 이상 등장해야 비밀번호로 사용할 수 있는지 순서대로 주어졌을 때 민호가 만들 수 있는 비밀번호의 종류의 수를 구하는 프로그램을 작성하자. 단 부분문자열이 등장하는 위치가 다르다면 부분문자열이 같다고 하더라도 다른 문자열로 취급한다.</p>
+<h4 id="-">풀이</h4>
+<p>부분 문자열의 크기만큼 전체 문자열에서 char를 뽑아서 queue에 차례로 넣어주었다.</p>
+<p>list가 아닌 queue를 고른 이유는 전체문자열 길이 만큼 순회하면서 iterable한 변수에서 가장 앞에 있는 원소를 계속 뽑아줘야하기 때문이다.</p>
+<p>Map을 이용해서 현재 부분문자열에 대한 &#39;A&#39;,&#39;C&#39;,&#39;G&#39;,&#39;T&#39;의 개수를 계속해서 갱신해나갔다.</p>
+<p>isCheck 메서드를 통해 부분문자열이 조건에 맞는 지를 판단하고 res에 추가해줬다.</p>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> java.util.*;
+
+<span class="hljs-keyword">public</span> class Main {
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> main(<span class="hljs-keyword">String</span>[] args) {
+        Scanner sc = <span class="hljs-keyword">new</span> Scanner(System.in);
+
+        <span class="hljs-built_in">int</span> s = sc.nextInt();
+        <span class="hljs-built_in">int</span> p = sc.nextInt();
+        sc.nextLine();
+
+        <span class="hljs-keyword">String</span> <span class="hljs-built_in">str</span> = sc.nextLine().strip();
+        <span class="hljs-built_in">int</span>[] arr = <span class="hljs-keyword">new</span> <span class="hljs-built_in">int</span>[<span class="hljs-number">4</span>];
+
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">4</span>; i++)
+            arr[i] = sc.nextInt();
+
+        Map&lt;Character,Integer&gt; <span class="hljs-built_in">map</span> = <span class="hljs-keyword">new</span> <span class="hljs-keyword">HashMap</span>&lt;&gt;();
+        <span class="hljs-built_in">map</span>.put(<span class="hljs-string">'A'</span>,<span class="hljs-number">0</span>);
+        <span class="hljs-built_in">map</span>.put(<span class="hljs-string">'G'</span>,<span class="hljs-number">0</span>);
+        <span class="hljs-built_in">map</span>.put(<span class="hljs-string">'C'</span>,<span class="hljs-number">0</span>);
+        <span class="hljs-built_in">map</span>.put(<span class="hljs-string">'T'</span>,<span class="hljs-number">0</span>);
+
+        Queue&lt;Character&gt; queue = <span class="hljs-keyword">new</span> LinkedList&lt;&gt;();
+        <span class="hljs-built_in">int</span> res = <span class="hljs-number">0</span>;
+
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; p; i++) {
+            <span class="hljs-built_in">char</span> tmp = <span class="hljs-built_in">str</span>.charAt(i);
+            queue.<span class="hljs-built_in">add</span>(tmp);
+            <span class="hljs-built_in">map</span>.put(tmp,<span class="hljs-built_in">map</span>.<span class="hljs-built_in">get</span>(tmp) + <span class="hljs-number">1</span>);
+        }
+
+        <span class="hljs-keyword">if</span> (isCheck(arr,<span class="hljs-built_in">map</span>))
+            res++;
+
+        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = p; i &lt; s; i++) {
+            <span class="hljs-built_in">char</span> tmp = <span class="hljs-built_in">str</span>.charAt(i);
+            queue.<span class="hljs-built_in">add</span>(tmp);
+            <span class="hljs-built_in">char</span> c = queue.poll();
+            <span class="hljs-built_in">map</span>.put(tmp,<span class="hljs-built_in">map</span>.<span class="hljs-built_in">get</span>(tmp) + <span class="hljs-number">1</span>);
+            <span class="hljs-built_in">map</span>.put(c,<span class="hljs-built_in">map</span>.<span class="hljs-built_in">get</span>(c) - <span class="hljs-number">1</span>);
+            <span class="hljs-keyword">if</span> (isCheck(arr,<span class="hljs-built_in">map</span>))
+                res++;
+        }
+
+        System.out.<span class="hljs-built_in">println</span>(res);
+    }
+
+    <span class="hljs-keyword">static</span> <span class="hljs-built_in">boolean</span> isCheck(<span class="hljs-built_in">int</span>[] arr, Map&lt;Character,Integer&gt; <span class="hljs-built_in">map</span>) {
+        <span class="hljs-keyword">if</span> (arr[<span class="hljs-number">0</span>] &gt; <span class="hljs-built_in">map</span>.<span class="hljs-built_in">get</span>(<span class="hljs-string">'A'</span>))
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+        <span class="hljs-keyword">if</span> (arr[<span class="hljs-number">1</span>] &gt; <span class="hljs-built_in">map</span>.<span class="hljs-built_in">get</span>(<span class="hljs-string">'C'</span>))
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+        <span class="hljs-keyword">if</span> (arr[<span class="hljs-number">2</span>] &gt; <span class="hljs-built_in">map</span>.<span class="hljs-built_in">get</span>(<span class="hljs-string">'G'</span>))
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+        <span class="hljs-keyword">return</span> arr[<span class="hljs-number">3</span>] &lt;= <span class="hljs-built_in">map</span>.<span class="hljs-built_in">get</span>(<span class="hljs-string">'T'</span>);
+    }
+}
+</code></pre>
+
+
+
+  </div>
+</body>
+</html>
