@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>17837번 - 새로운 게임 2</title>
+  <title>1613번 - 역사</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
@@ -38,78 +38,79 @@
 </li>
 <li>compare메서드를 구현해 int a,b가 매개변수로 들어왔을 때 a를 key로 한 <code>Map&lt;Integer,Boolean&gt;</code> 자료구조에 b가 포함되는 지 containsKey() 메서드로 판별하고 그렇다면 -1을 return b를 key로 한 <code>Map&lt;Integer,Boolean&gt;</code> 자료구조에 a가 포함된다면 1를 return 그렇지 않다면 0을 return하게 구현하였다.</li>
 </ol>
-<pre><code class="lang-java"><span class="hljs-keyword">import</span> java.io.<span class="hljs-keyword">BufferedReader</span>;
-<span class="hljs-keyword">import</span> java.io.IOException;
-<span class="hljs-keyword">import</span> java.io.InputStreamReader;
-<span class="hljs-keyword">import</span> java.util.*;
-
-<span class="hljs-keyword">public</span> class Main {
-    <span class="hljs-keyword">static</span> Map&lt;Integer,Map&lt;Integer,Boolean&gt;&gt; isIncludeMap;
-    <span class="hljs-keyword">static</span> List&lt;Integer&gt;[] orderArr;
-
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> main(<span class="hljs-keyword">String</span>[] args) <span class="hljs-keyword">throws</span> IOException {
-        <span class="hljs-keyword">BufferedReader</span> bf = <span class="hljs-keyword">new</span> <span class="hljs-keyword">BufferedReader</span>(<span class="hljs-keyword">new</span> InputStreamReader(System.in));
-        <span class="hljs-keyword">String</span>[] s = bf.readLine().<span class="hljs-built_in">split</span>(<span class="hljs-string">" "</span>);
-        <span class="hljs-built_in">int</span> n = Integer.parseInt(s[<span class="hljs-number">0</span>]);
-        <span class="hljs-built_in">int</span> k = Integer.parseInt(s[<span class="hljs-number">1</span>]);
-
-        orderArr = <span class="hljs-keyword">new</span> List[n+<span class="hljs-number">1</span>];
-        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">1</span>; i &lt; n+<span class="hljs-number">1</span>; i++)
-            orderArr[i] = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
-
-        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; k; i++) {
-            <span class="hljs-keyword">String</span>[] tmp = bf.readLine().<span class="hljs-built_in">split</span>(<span class="hljs-string">" "</span>);
-            <span class="hljs-built_in">int</span> a = Integer.parseInt(tmp[<span class="hljs-number">0</span>]);
-            <span class="hljs-built_in">int</span> b = Integer.parseInt(tmp[<span class="hljs-number">1</span>]);
-
-            orderArr[a].<span class="hljs-built_in">add</span>(b);
-        }
-
-        isIncludeMapping();
-
-        <span class="hljs-built_in">int</span> t = Integer.parseInt(bf.readLine().<span class="hljs-built_in">split</span>(<span class="hljs-string">" "</span>)[<span class="hljs-number">0</span>]);
-        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; t; i++) {
-            <span class="hljs-keyword">String</span>[] tmp = bf.readLine().<span class="hljs-built_in">split</span>(<span class="hljs-string">" "</span>);
-            <span class="hljs-built_in">int</span> a = Integer.parseInt(tmp[<span class="hljs-number">0</span>]);
-            <span class="hljs-built_in">int</span> b = Integer.parseInt(tmp[<span class="hljs-number">1</span>]);
-
-            System.out.<span class="hljs-built_in">println</span>(compare(a,b));
-        }
-
-    }
-
-    <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> isIncludeMapping() {
-        isIncludeMap = <span class="hljs-keyword">new</span> <span class="hljs-keyword">HashMap</span>&lt;&gt;();
-        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">1</span>; i &lt; orderArr.length; i++)
-            isIncludeMap.put(i,bfs(i));
-    }
-
-    <span class="hljs-keyword">static</span> Map&lt;Integer,Boolean&gt; bfs(<span class="hljs-built_in">int</span> start) {
-        Queue&lt;Integer&gt; queue = <span class="hljs-keyword">new</span> LinkedList&lt;&gt;();
-        Map&lt;Integer,Boolean&gt; res = <span class="hljs-keyword">new</span> <span class="hljs-keyword">HashMap</span>&lt;&gt;();
-        <span class="hljs-built_in">boolean</span>[] visit = <span class="hljs-keyword">new</span> <span class="hljs-built_in">boolean</span>[orderArr.length];
-
-        queue.<span class="hljs-built_in">add</span>(start);
-
-        <span class="hljs-keyword">while</span> (queue.<span class="hljs-built_in">size</span>() &gt; <span class="hljs-number">0</span>) {
-            <span class="hljs-built_in">int</span> node = queue.poll();
-            <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> num : orderArr[node])
-                <span class="hljs-keyword">if</span> (!visit[num]) {
-                    visit[num] = <span class="hljs-keyword">true</span>;
-                    res.put(num,<span class="hljs-keyword">true</span>);
-                    queue.<span class="hljs-built_in">add</span>(num);
-                }
-        }
-        <span class="hljs-keyword">return</span> res;
-    }
-
-    <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> compare(<span class="hljs-built_in">int</span> a, <span class="hljs-built_in">int</span> b) {
-        <span class="hljs-keyword">if</span> (isIncludeMap.<span class="hljs-built_in">get</span>(a).containsKey(b)) <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
-        <span class="hljs-keyword">if</span> (isIncludeMap.<span class="hljs-built_in">get</span>(b).containsKey(a)) <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
-        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-    }
-}
-</code></pre>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">io</span><span class="op">.</span><span class="im">BufferedReader</span><span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">io</span><span class="op">.</span><span class="im">IOException</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">io</span><span class="op">.</span><span class="im">InputStreamReader</span><span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">util</span><span class="op">.*;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Main <span class="op">{</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="bu">Map</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">,</span><span class="bu">Map</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">,</span><span class="bu">Boolean</span><span class="op">&gt;&gt;</span> isIncludeMap<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;[]</span> orderArr<span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="kw">throws</span> <span class="bu">IOException</span> <span class="op">{</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">BufferedReader</span> bf <span class="op">=</span> <span class="kw">new</span> <span class="bu">BufferedReader</span><span class="op">(</span><span class="kw">new</span> <span class="bu">InputStreamReader</span><span class="op">(</span><span class="bu">System</span><span class="op">.</span><span class="fu">in</span><span class="op">));</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="bu">String</span><span class="op">[]</span> s <span class="op">=</span> bf<span class="op">.</span><span class="fu">readLine</span><span class="op">().</span><span class="fu">split</span><span class="op">(</span><span class="st">&quot; &quot;</span><span class="op">);</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> n <span class="op">=</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>s<span class="op">[</span><span class="dv">0</span><span class="op">]);</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> k <span class="op">=</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>s<span class="op">[</span><span class="dv">1</span><span class="op">]);</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        orderArr <span class="op">=</span> <span class="kw">new</span> <span class="bu">List</span><span class="op">[</span>n<span class="op">+</span><span class="dv">1</span><span class="op">];</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">+</span><span class="dv">1</span><span class="op">;</span> i<span class="op">++)</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            orderArr<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;();</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> k<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>            <span class="bu">String</span><span class="op">[]</span> tmp <span class="op">=</span> bf<span class="op">.</span><span class="fu">readLine</span><span class="op">().</span><span class="fu">split</span><span class="op">(</span><span class="st">&quot; &quot;</span><span class="op">);</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>            <span class="dt">int</span> a <span class="op">=</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>tmp<span class="op">[</span><span class="dv">0</span><span class="op">]);</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>            <span class="dt">int</span> b <span class="op">=</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>tmp<span class="op">[</span><span class="dv">1</span><span class="op">]);</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>            orderArr<span class="op">[</span>a<span class="op">].</span><span class="fu">add</span><span class="op">(</span>b<span class="op">);</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        <span class="fu">isIncludeMapping</span><span class="op">();</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> t <span class="op">=</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>bf<span class="op">.</span><span class="fu">readLine</span><span class="op">().</span><span class="fu">split</span><span class="op">(</span><span class="st">&quot; &quot;</span><span class="op">)[</span><span class="dv">0</span><span class="op">]);</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> t<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>            <span class="bu">String</span><span class="op">[]</span> tmp <span class="op">=</span> bf<span class="op">.</span><span class="fu">readLine</span><span class="op">().</span><span class="fu">split</span><span class="op">(</span><span class="st">&quot; &quot;</span><span class="op">);</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>            <span class="dt">int</span> a <span class="op">=</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>tmp<span class="op">[</span><span class="dv">0</span><span class="op">]);</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>            <span class="dt">int</span> b <span class="op">=</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>tmp<span class="op">[</span><span class="dv">1</span><span class="op">]);</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>            <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="fu">compare</span><span class="op">(</span>a<span class="op">,</span>b<span class="op">));</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">void</span> <span class="fu">isIncludeMapping</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>        isIncludeMap <span class="op">=</span> <span class="kw">new</span> <span class="bu">HashMap</span><span class="op">&lt;&gt;();</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> i <span class="op">&lt;</span> orderArr<span class="op">.</span><span class="fu">length</span><span class="op">;</span> i<span class="op">++)</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>            isIncludeMap<span class="op">.</span><span class="fu">put</span><span class="op">(</span>i<span class="op">,</span><span class="fu">bfs</span><span class="op">(</span>i<span class="op">));</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="bu">Map</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">,</span><span class="bu">Boolean</span><span class="op">&gt;</span> <span class="fu">bfs</span><span class="op">(</span><span class="dt">int</span> start<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Queue</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> queue <span class="op">=</span> <span class="kw">new</span> <span class="bu">LinkedList</span><span class="op">&lt;&gt;();</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Map</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">,</span><span class="bu">Boolean</span><span class="op">&gt;</span> res <span class="op">=</span> <span class="kw">new</span> <span class="bu">HashMap</span><span class="op">&lt;&gt;();</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>        <span class="dt">boolean</span><span class="op">[]</span> visit <span class="op">=</span> <span class="kw">new</span> <span class="dt">boolean</span><span class="op">[</span>orderArr<span class="op">.</span><span class="fu">length</span><span class="op">];</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>        queue<span class="op">.</span><span class="fu">add</span><span class="op">(</span>start<span class="op">);</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="op">(</span>queue<span class="op">.</span><span class="fu">size</span><span class="op">()</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>            <span class="dt">int</span> node <span class="op">=</span> queue<span class="op">.</span><span class="fu">poll</span><span class="op">();</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> num <span class="op">:</span> orderArr<span class="op">[</span>node<span class="op">])</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(!</span>visit<span class="op">[</span>num<span class="op">])</span> <span class="op">{</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>                    visit<span class="op">[</span>num<span class="op">]</span> <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>                    res<span class="op">.</span><span class="fu">put</span><span class="op">(</span>num<span class="op">,</span><span class="kw">true</span><span class="op">);</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>                    queue<span class="op">.</span><span class="fu">add</span><span class="op">(</span>num<span class="op">);</span></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> res<span class="op">;</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">int</span> <span class="fu">compare</span><span class="op">(</span><span class="dt">int</span> a<span class="op">,</span> <span class="dt">int</span> b<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>isIncludeMap<span class="op">.</span><span class="fu">get</span><span class="op">(</span>a<span class="op">).</span><span class="fu">containsKey</span><span class="op">(</span>b<span class="op">))</span> <span class="cf">return</span> <span class="op">-</span><span class="dv">1</span><span class="op">;</span></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>isIncludeMap<span class="op">.</span><span class="fu">get</span><span class="op">(</span>b<span class="op">).</span><span class="fu">containsKey</span><span class="op">(</span>a<span class="op">))</span> <span class="cf">return</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+    
 
   </div>
 </body>
