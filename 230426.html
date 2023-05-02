@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>14719번 - 빗물</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <link href="./static/css/main.css" rel="stylesheet">
+</head>
+<body>
+  <div class="md-container">
+    <h2 class="fw-bold" id="번---빗물">14719번 - 빗물</h2>
+<h4 id="분류-구현">분류 : 구현</h4>
+<h4 id="문제">문제</h4>
+<p>2차원 세계에 블록이 쌓여있다. 비가 오면 블록 사이에 빗물이
+고인다.</p>
+<p><img
+src="https://onlinejudgeimages.s3-ap-northeast-1.amazonaws.com/problem/14719/1.png" /><img
+src="https://onlinejudgeimages.s3-ap-northeast-1.amazonaws.com/problem/14719/2.png" /></p>
+<p>비는 충분히 많이 온다. 고이는 빗물의 총량은 얼마일까?</p>
+<h4 id="풀이">풀이</h4>
+<p>임의의 한 지점이 빗물에 차려면 해당 지점의 앞뒤로 벽이 존재해야
+한다.(꼭 바로 옆에 있을 필요는 없다.)</p>
+<p>이를 이용해서 풀이하면 배열을 행단위로 뽑은 후 벽이 있는 idx를 모두
+list에 저장한다.</p>
+<p>이후 getEmptySpace 메서드를 구현해 각각 벽 사이의 공간의 크기를 더해
+총 합을 return한다.</p>
+<p>이를 각 행마다 전부 진행하고 이를 최종 값으로 출력한다.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">util</span><span class="op">.</span><span class="im">ArrayList</span><span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">util</span><span class="op">.</span><span class="im">List</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">util</span><span class="op">.</span><span class="im">Scanner</span><span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Main <span class="op">{</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">int</span> h<span class="op">,</span>w<span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">int</span><span class="op">[][]</span> arr<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Scanner</span> sc <span class="op">=</span> <span class="kw">new</span> <span class="bu">Scanner</span><span class="op">(</span><span class="bu">System</span><span class="op">.</span><span class="fu">in</span><span class="op">);</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        h <span class="op">=</span> sc<span class="op">.</span><span class="fu">nextInt</span><span class="op">();</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> sc<span class="op">.</span><span class="fu">nextInt</span><span class="op">();</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        arr <span class="op">=</span> <span class="kw">new</span> <span class="dt">int</span><span class="op">[</span>h<span class="op">][</span>w<span class="op">];</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> w<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            <span class="dt">int</span> tmp <span class="op">=</span> sc<span class="op">.</span><span class="fu">nextInt</span><span class="op">();</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> tmp<span class="op">;</span> j<span class="op">++)</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>                arr<span class="op">[</span>j<span class="op">][</span>i<span class="op">]</span> <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="fu">solution</span><span class="op">());</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">int</span> <span class="fu">solution</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> res <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> h<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>            <span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> lst <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;();</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> w<span class="op">;</span> j<span class="op">++)</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span>arr<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span> <span class="op">==</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>                    lst<span class="op">.</span><span class="fu">add</span><span class="op">(</span>j<span class="op">);</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>            res <span class="op">+=</span> <span class="fu">getEmptySpace</span><span class="op">(</span>lst<span class="op">);</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> res<span class="op">;</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">int</span> <span class="fu">getEmptySpace</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> lst<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>lst<span class="op">.</span><span class="fu">size</span><span class="op">()</span> <span class="op">==</span> <span class="dv">0</span> <span class="op">||</span> lst<span class="op">.</span><span class="fu">size</span><span class="op">()</span> <span class="op">==</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> res <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> i <span class="op">&lt;</span> lst<span class="op">.</span><span class="fu">size</span><span class="op">();</span> i<span class="op">++)</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>            res <span class="op">+=</span> lst<span class="op">.</span><span class="fu">get</span><span class="op">(</span>i<span class="op">)</span> <span class="op">-</span> lst<span class="op">.</span><span class="fu">get</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)</span> <span class="op">-</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> res<span class="op">;</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+  
+
+
+  </div>
+</body>
+</html>
