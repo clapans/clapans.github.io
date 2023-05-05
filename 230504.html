@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2812번 - 크게 만들기</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <link href="./static/css/main.css" rel="stylesheet">
+</head>
+<body>
+  <div class="md-container">
+    <h2 class="fw-bold" id="번---크게-만들기">2812번 - 크게 만들기</h2>
+<h4 id="분류-스택-그리디-알고리즘">분류 : 스택, 그리디 알고리즘</h4>
+<h4 id="문제">문제</h4>
+<p>N자리 숫자가 주어졌을 때, 여기서 숫자 K개를 지워서 얻을 수 있는 가장
+큰 수를 구하는 프로그램을 작성하시오.</p>
+<h4 id="풀이">풀이</h4>
+<p>기본 숫자 문자열을 순회하면서 각 숫자 마다 해당 숫자를 사용할 지 말
+지에 대해 정해야한다.</p>
+<p>일단, 기본적으로는 모두 사용하는 것으로 하고 숫자를 Stack에
+저장하였다.</p>
+<p>그리고 이후 들어오는 숫자가 스택의 마지막 숫자보다 크다면 또 아직
+버려야하는 숫자만큼 다 버리지 않았다면 해당 숫자를 버렸다.</p>
+<p>어떤 경우의 수가 나오던 해당 숫자를 버리는 경우가 안 버리는 경우보다
+더 큰 숫자를 얻을 수 있기 때문</p>
+<p>이를 스택의 마지막 숫자가 다음 숫자보다 크거나 같을 때까지 버림을
+진행했다. 중간에 버릴 숫자의 양이 먼저 다 소모되면 멈춘다.</p>
+<p>이 후 K를 다 소모했냐 못 했냐에 따라서 다 소모했으면 Stack에 있는
+모든 숫자를 출력하고 아니라면 K개 만큼만 스택을 거꾸로 뒤집어서
+출력했다.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">util</span><span class="op">.*;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Main <span class="op">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">int</span> n<span class="op">,</span>k<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="bu">Stack</span><span class="op">&lt;</span><span class="bu">Character</span><span class="op">&gt;</span> stack<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Scanner</span> sc <span class="op">=</span> <span class="kw">new</span> <span class="bu">Scanner</span><span class="op">(</span><span class="bu">System</span><span class="op">.</span><span class="fu">in</span><span class="op">);</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        n <span class="op">=</span> sc<span class="op">.</span><span class="fu">nextInt</span><span class="op">();</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        k <span class="op">=</span> sc<span class="op">.</span><span class="fu">nextInt</span><span class="op">();</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> len <span class="op">=</span> n <span class="op">-</span> k<span class="op">;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="bu">String</span> s <span class="op">=</span> sc<span class="op">.</span><span class="fu">next</span><span class="op">();</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">biggestNum</span><span class="op">(</span>s<span class="op">);</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="bu">List</span><span class="op">&lt;</span><span class="bu">Character</span><span class="op">&gt;</span> lst <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;();</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="op">(</span>stack<span class="op">.</span><span class="fu">size</span><span class="op">()</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>            lst<span class="op">.</span><span class="fu">add</span><span class="op">(</span>stack<span class="op">.</span><span class="fu">pop</span><span class="op">());</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> lst<span class="op">.</span><span class="fu">size</span><span class="op">()</span> <span class="op">-</span> <span class="dv">1</span><span class="op">;</span> i <span class="op">&gt;</span> lst<span class="op">.</span><span class="fu">size</span><span class="op">()</span> <span class="op">-</span> len <span class="op">-</span> <span class="dv">1</span><span class="op">;</span> i<span class="op">--)</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>            <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">print</span><span class="op">(</span>lst<span class="op">.</span><span class="fu">get</span><span class="op">(</span>i<span class="op">));</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">void</span> <span class="fu">biggestNum</span><span class="op">(</span><span class="bu">String</span> s<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        stack <span class="op">=</span> <span class="kw">new</span> <span class="bu">Stack</span><span class="op">&lt;&gt;();</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        stack<span class="op">.</span><span class="fu">add</span><span class="op">(</span>s<span class="op">.</span><span class="fu">charAt</span><span class="op">(</span><span class="dv">0</span><span class="op">));</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>            <span class="cf">while</span> <span class="op">(</span>stack<span class="op">.</span><span class="fu">size</span><span class="op">()</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span>k <span class="op">==</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span>stack<span class="op">.</span><span class="fu">peek</span><span class="op">()</span> <span class="op">&gt;=</span> s<span class="op">.</span><span class="fu">charAt</span><span class="op">(</span>i<span class="op">))</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>                stack<span class="op">.</span><span class="fu">pop</span><span class="op">();</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>                k<span class="op">--;</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>            stack<span class="op">.</span><span class="fu">add</span><span class="op">(</span>s<span class="op">.</span><span class="fu">charAt</span><span class="op">(</span>i<span class="op">));</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+  
+
+  </div>
+</body>
+</html>
