@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL - 특정 기간동안 대여 가능한 자동차들의 대여비용 구하기</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <link href="./static/css/main.css" rel="stylesheet">
+</head>
+<body>
+  <div class="md-container">
+    <h2 id="sql---특정-기간동안-대여-가능한-자동차들의-대여비용-구하기">SQL
+      - 특정 기간동안 대여 가능한 자동차들의 대여비용 구하기</h2>
+      <h4 id="문제">문제</h4>
+      <p>다음은 어느 자동차 대여 회사에서 대여 중인 자동차들의 정보를
+      담은 <code>CAR_RENTAL_COMPANY_CAR</code> 테이블과 자동차 대여 기록
+      정보를 담은 <code>CAR_RENTAL_COMPANY_RENTAL_HISTORY</code> 테이블과
+      자동차 종류 별 대여 기간 종류 별 할인 정책 정보를
+      담은 <code>CAR_RENTAL_COMPANY_DISCOUNT_PLAN</code> 테이블 입니다.ㄴ</p>
+      <p><code>CAR_RENTAL_COMPANY_CAR</code> 테이블은 아래와 같은 구조로
+      되어있으며, <code>CAR_ID</code>, <code>CAR_TYPE</code>, <code>DAILY_FEE</code>, <code>OPTIONS</code> 는
+      각각 자동차 ID, 자동차 종류, 일일 대여 요금(원), 자동차 옵션 리스트를
+      나타냅니다.</p>
+      <table>
+      <thead>
+      <tr class="header">
+      <th>Column name</th>
+      <th>Type</th>
+      <th>Nullable</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="odd">
+      <td>CAR_ID</td>
+      <td>INTEGER</td>
+      <td>FALSE</td>
+      </tr>
+      <tr class="even">
+      <td>CAR_TYPE</td>
+      <td>VARCHAR(255)</td>
+      <td>FALSE</td>
+      </tr>
+      <tr class="odd">
+      <td>DAILY_FEE</td>
+      <td>INTEGER</td>
+      <td>FALSE</td>
+      </tr>
+      <tr class="even">
+      <td>OPTIONS</td>
+      <td>VARCHAR(255)</td>
+      <td>FALSE</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>자동차 종류는 ‘세단’, ‘SUV’, ‘승합차’, ‘트럭’, ‘리무진’ 이 있습니다.
+      자동차 옵션 리스트는 콤마(‘,’)로 구분된 키워드 리스트(예:
+      ‘’열선시트,스마트키,주차감지센서’‘)로 되어있으며, 키워드 종류는
+      ’주차감지센서’, ‘스마트키’, ‘네비게이션’, ‘통풍시트’, ‘열선시트’,
+      ‘후방카메라’, ‘가죽시트’ 가 있습니다.</p>
+      <p><code>CAR_RENTAL_COMPANY_RENTAL_HISTORY</code> 테이블은 아래와 같은
+      구조로
+      되어있으며, <code>HISTORY_ID</code>, <code>CAR_ID</code>, <code>START_DATE</code>, <code>END_DATE</code> 는
+      각각 자동차 대여 기록 ID, 자동차 ID, 대여 시작일, 대여 종료일을
+      나타냅니다.</p>
+      <table>
+      <thead>
+      <tr class="header">
+      <th>Column name</th>
+      <th>Type</th>
+      <th>Nullable</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="odd">
+      <td>HISTORY_ID</td>
+      <td>INTEGER</td>
+      <td>FALSE</td>
+      </tr>
+      <tr class="even">
+      <td>CAR_ID</td>
+      <td>INTEGER</td>
+      <td>FALSE</td>
+      </tr>
+      <tr class="odd">
+      <td>START_DATE</td>
+      <td>DATE</td>
+      <td>FALSE</td>
+      </tr>
+      <tr class="even">
+      <td>END_DATE</td>
+      <td>DATE</td>
+      <td>FALSE</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><code>CAR_RENTAL_COMPANY_DISCOUNT_PLAN</code> 테이블은 아래와 같은
+      구조로
+      되어있으며, <code>PLAN_ID</code>, <code>CAR_TYPE</code>, <code>DURATION_TYPE</code>, <code>DISCOUNT_RATE</code> 는
+      각각 요금 할인 정책 ID, 자동차 종류, 대여 기간 종류, 할인율(%)을
+      나타냅니다.</p>
+      <table>
+      <thead>
+      <tr class="header">
+      <th>Column name</th>
+      <th>Type</th>
+      <th>Nullable</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="odd">
+      <td>PLAN_ID</td>
+      <td>INTEGER</td>
+      <td>FALSE</td>
+      </tr>
+      <tr class="even">
+      <td>CAR_TYPE</td>
+      <td>VARCHAR(255)</td>
+      <td>FALSE</td>
+      </tr>
+      <tr class="odd">
+      <td>DURATION_TYPE</td>
+      <td>VARCHAR(255)</td>
+      <td>FALSE</td>
+      </tr>
+      <tr class="even">
+      <td>DISCOUNT_RATE</td>
+      <td>INTEGER</td>
+      <td>FALSE</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>할인율이 적용되는 대여 기간 종류로는 ‘7일 이상’ (대여 기간이 7일 이상
+      30일 미만인 경우), ‘30일 이상’ (대여 기간이 30일 이상 90일 미만인 경우),
+      ‘90일 이상’ (대여 기간이 90일 이상인 경우) 이 있습니다. 대여 기간이 7일
+      미만인 경우 할인정책이 없습니다.</p>
+      <hr />
+      <p><code>CAR_RENTAL_COMPANY_CAR</code> 테이블과 <code>CAR_RENTAL_COMPANY_RENTAL_HISTORY</code> 테이블과 <code>CAR_RENTAL_COMPANY_DISCOUNT_PLAN</code> 테이블에서
+      자동차 종류가 ‘세단’ 또는 ‘SUV’ 인 자동차 중 2022년 11월 1일부터 2022년
+      11월 30일까지 대여 가능하고 30일간의 대여 금액이 50만원 이상 200만원
+      미만인 자동차에 대해서 자동차 ID, 자동차 종류, 대여
+      금액(컬럼명: <code>FEE</code>) 리스트를 출력하는 SQL문을 작성해주세요.
+      결과는 대여 금액을 기준으로 내림차순 정렬하고, 대여 금액이 같은 경우
+      자동차 종류를 기준으로 오름차순 정렬, 자동차 종류까지 같은 경우 자동차
+      ID를 기준으로 내림차순 정렬해주세요.</p>
+      <h4 id="풀이">풀이</h4>
+      <p>DISCOUNT_PLAN 테이블의 DISCOUNT_RATE과 CAR_RENTAL_COMPANY_CAR
+      테이블의 DAILY_FEE를 이용해 종합 요금 컬럼을 만들어야 함으로 우선적으로
+      두 테이블을 JOIN 해야한다.</p>
+      <p>JOIN을 하면서 이용 기간은 한 달 임으로 DISCOUNT_PLAN 테이블에 30일
+      이상의 할인율이 레코드만 가져온다.</p>
+      <p>이렇게 구한 테이블에 2022-11-01 ~ 2022-11-31 사이에 이미 빌리는
+      이력이 존재하는 차들의 ID를 WHERE를 통해 뽑고 해당 CAR_ID에 속하지 않은
+      레코드들만 추린다.</p>
+      <p>마지막으로 CAR_TYPE이 세단이나 SUV 인 것과 요금이 50만원에서 200만원
+      사이인 레코드만을 가져오고 이를 조건에 맞게 정렬한다.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>SELECT CAR_ID<span class="op">,</span>A<span class="op">.</span><span class="fu">CAR_TYPE</span><span class="op">,</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ROUND</span><span class="op">(</span>DAILY_FEE <span class="op">*</span> <span class="op">(</span><span class="dv">100</span> <span class="op">-</span> DISCOUNT_RATE<span class="op">)</span> <span class="op">/</span> <span class="dv">100</span> <span class="op">*</span> <span class="dv">30</span><span class="op">,</span><span class="dv">0</span><span class="op">)</span> AS FEE</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>FROM CAR_RENTAL_COMPANY_CAR A</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>LEFT JOIN </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">(</span>SELECT <span class="op">*</span> FROM CAR_RENTAL_COMPANY_DISCOUNT_PLAN</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>WHERE DURATION_TYPE <span class="op">=</span> <span class="st">&quot;30일 이상&quot;</span><span class="op">)</span> B</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>ON A<span class="op">.</span><span class="fu">CAR_TYPE</span> <span class="op">=</span> B<span class="op">.</span><span class="fu">CAR_TYPE</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>WHERE CAR_ID NOT IN</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="op">(</span>SELECT CAR_ID FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>WHERE <span class="fu">DATEDIFF</span><span class="op">(</span><span class="st">&quot;2022-11-01&quot;</span><span class="op">,</span>END_DATE<span class="op">)</span> <span class="op">&lt;</span> <span class="dv">1</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>AND <span class="fu">DATEDIFF</span><span class="op">(</span>START_DATE<span class="op">,</span><span class="st">&quot;2022-11-30&quot;</span><span class="op">)</span> <span class="op">&lt;</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">AND</span> <span class="op">(</span>A<span class="op">.</span><span class="fu">CAR_TYPE</span> <span class="op">=</span> <span class="st">&quot;세단&quot;</span> OR A<span class="op">.</span><span class="fu">CAR_TYPE</span> <span class="op">=</span> <span class="st">&quot;SUV&quot;</span><span class="op">)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>AND <span class="fu">ROUND</span><span class="op">(</span>DAILY_FEE <span class="op">*</span> <span class="op">(</span><span class="dv">100</span> <span class="op">-</span> DISCOUNT_RATE<span class="op">)</span> <span class="op">/</span> <span class="dv">100</span> <span class="op">*</span> <span class="dv">30</span><span class="op">,</span><span class="dv">0</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="dv">500000</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>AND <span class="fu">ROUND</span><span class="op">(</span>DAILY_FEE <span class="op">*</span> <span class="op">(</span><span class="dv">100</span> <span class="op">-</span> DISCOUNT_RATE<span class="op">)</span> <span class="op">/</span> <span class="dv">100</span> <span class="op">*</span> <span class="dv">30</span><span class="op">,</span><span class="dv">0</span><span class="op">)</span> <span class="op">&lt;</span> <span class="dv">2000000</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>ORDER BY FEE DESC<span class="op">,</span> CAR_TYPE<span class="op">,</span> CAR_ID</span></code></pre></div>
+      
+  </div>
+</body>
+</html>

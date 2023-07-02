@@ -233,3 +233,15 @@ h5 {
 .hljs-number {
   color : black;
 }
+
+table {
+  margin-bottom : 40px;
+}
+
+th {
+  padding-right : 15px;
+}
+
+td {
+  padding-right : 15px;
+}
