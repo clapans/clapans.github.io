@@ -18,7 +18,6 @@ document.querySelector(".select-filter").addEventListener("click",() => {
   setFilter(filterLst,"click")
 })
 
-console.log(sessionStorage.get)
 body.addEventListener("click",() => {
   if (!searchCandidate.classList.contains("d-none")) {
     searchCandidate.classList.add("d-none")
@@ -56,9 +55,11 @@ function setFilter(filterLst,str) {
 function isIncludeFilter(el,lst) {
   if (lst.length === 0)
     return true
-  for (let t of lst) 
+  for (let t of lst) {
+    t = t.replaceAll(" ","_")
     if (el.classList.contains(t))
       return true
+  }
   return false
 }
 
