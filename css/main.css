@@ -1,28 +1,40 @@
 #container {
-  width: calc(min(1200px,90%)) !important;
+  width: calc(min(990px,90%)) !important;
 }
 
 .item-pot {
-  width : 75px;
-  height : 75px;
+  width : 60px;
+  height : 60px;
   display : inline-block;
   background-color: rgb(200,200,200);
+  margin : 3px;
+}
+
+.item-pot > img {
+  width : 80%;
+  height : 80%;
+  margin : auto;
+  margin-top : 10%;
+  display : block;
 }
 
 .equipment-area {
-  width : 400px;
-  height : 485px;
+  width : 330px;
+  height : 500px;
   padding : 0px;
   margin : auto;
+  letter-spacing: 0px;
+  word-spacing: 0px;
+  font-size: 0px;
 }
 
 .monster-area {
-  width : 400px;
+  width : 330px;
   margin : auto;
 }
 
 .skill-area {
-  width : 400px;
+  width : 330px;
   height : 500px;
   margin : auto;
   border : 1px solid black;
@@ -46,6 +58,10 @@
 }
 
 .selected {
+  background-color: rgb(247,228,255);
+}
+
+.selected-item {
   background-color: rgb(247,228,255);
 }
 
@@ -80,11 +96,16 @@
   overflow : hidden"
 }
 
-
 .option {
   margin : 10px 20px 10px 20px;
   padding-left : 10px;
   padding-right : 10px;
+}
+
+#item-select-select > .option {
+  height : 75px;
+  line-height: 75px;
+  border-radius: 20px;
 }
 
 #monster-category-container > .option {
