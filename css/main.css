@@ -1,5 +1,20 @@
+@font-face {
+  font-family: 'omyu_pretty';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/omyu_pretty.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'omyu_pretty';
+}
+
 #container {
-  width: calc(min(990px,90%)) !important;
+  width: calc(min(990px,100%)) !important;
+}
+
+#nav-container {
+  width: calc(min(990px,100%)) !important;
 }
 
 .item-pot {
@@ -18,25 +33,21 @@
   display : block;
 }
 
-.equipment-area {
+.area {
   width : 330px;
-  height : 500px;
-  padding : 0px;
+  height : 396px;
   margin : auto;
+  margin-top : 50px;
+}
+
+.equipment-area {
+  padding : 0px;
   letter-spacing: 0px;
   word-spacing: 0px;
   font-size: 0px;
 }
 
-.monster-area {
-  width : 330px;
-  margin : auto;
-}
-
 .skill-area {
-  width : 330px;
-  height : 500px;
-  margin : auto;
   border : 1px solid black;
 }
 
@@ -57,8 +68,8 @@
   text-align: center;
 }
 
-.selected {
-  background-color: rgb(247,228,255);
+.selected > div:nth-child(1) {
+  background-color: rgb(248, 233, 255);
 }
 
 .selected-item {
@@ -87,19 +98,25 @@
 }
 
 #monster-category-container {
-  height : 500px;
+  height : 396px;
 }
 
-#monster-category-container > .option > .monster-category {
+#monster-category-container > .option > div > .monster-category {
   font-weight: bold; 
   display: inline; 
-  overflow : hidden"
+  overflow : hidden;
+  margin-left : 40px;
+  font-size: 20px;
 }
 
 .option {
   margin : 10px 20px 10px 20px;
-  padding-left : 10px;
-  padding-right : 10px;
+  display: block;
+  width: 90%;
+  margin: auto;
+  margin-top: 10px;
+  background-color: transparent;
+  border: 0px;
 }
 
 #item-select-select > .option {
@@ -108,10 +125,12 @@
   border-radius: 20px;
 }
 
-#monster-category-container > .option {
-  height : 50px;
+#monster-category-container > .option > div:nth-child(1) {
   line-height: 50px;
   border-radius: 15px;
+  position: relative;
+  text-align: start !important;
+  width : 100%;
 }
 
 img {
@@ -142,4 +161,22 @@ img {
 .myButton:active {
   position:relative;
   top:1px;
+}
+
+.chevron {
+  position : absolute;
+  top : calc(50px / 2 - 8px);
+  left : 15px;
+}
+
+.monster-info {
+  font-size : 17px;
+  line-height: 33px;
+  border-radius: 10px;
+  width : 90%;
+  margin : auto;
+}
+
+.selected-monster {
+  background-color: rgb(235, 187, 255);
 }
