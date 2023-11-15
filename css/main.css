@@ -1,0 +1,124 @@
+#container {
+  width: calc(min(1200px,90%)) !important;
+}
+
+.item-pot {
+  width : 75px;
+  height : 75px;
+  display : inline-block;
+  background-color: rgb(200,200,200);
+}
+
+.equipment-area {
+  width : 400px;
+  height : 485px;
+  padding : 0px;
+  margin : auto;
+}
+
+.monster-area {
+  width : 400px;
+  margin : auto;
+}
+
+.skill-area {
+  width : 400px;
+  height : 500px;
+  margin : auto;
+  border : 1px solid black;
+}
+
+.empty-pot {
+  background-color: white !important;
+}
+
+.form-select:focus {
+  border : 0px !important;
+  box-shadow: 0 0 0 0 !important;
+}
+
+#item-select-select > div {
+  text-align: center;
+}
+
+.select-container > div {
+  text-align: center;
+}
+
+.selected {
+  background-color: rgb(247,228,255);
+}
+
+#item-select-select {
+  border : 2px solid rgb(196,196,196);
+  border-radius: 20px;
+  height : 500px;
+  overflow-y: scroll;
+}
+
+#item-select-select::-webkit-scrollbar {
+  width : 0px;
+}
+
+.select-container {
+  border : 2px solid rgb(196,196,196);
+  border-radius: 20px;
+  overflow-y: scroll;
+}
+
+.select-container::-webkit-scrollbar {
+  width : 0px;
+}
+
+#monster-category-container {
+  height : 500px;
+}
+
+#monster-category-container > .option > .monster-category {
+  font-weight: bold; 
+  display: inline; 
+  overflow : hidden"
+}
+
+
+.option {
+  margin : 10px 20px 10px 20px;
+  padding-left : 10px;
+  padding-right : 10px;
+}
+
+#monster-category-container > .option {
+  height : 50px;
+  line-height: 50px;
+  border-radius: 15px;
+}
+
+img {
+  vertical-align: middle;
+}
+
+.myButton {
+  box-shadow:inset 0px 1px 0px 0px #e184f3;
+  background-color:#e45cff;
+  border-radius:25px;
+  border:1px solid #c45bde;
+  display:inline-block;
+  cursor:pointer;
+  color:#ffffff;
+  font-family:Arial;
+  font-size:16px;
+  font-weight:bold;
+  padding:13px 24px;
+  text-decoration:none;
+  text-shadow:0px 1px 0px #9b14b3;
+  margin-bottom: 20px;
+}
+
+.myButton:hover {
+  background-color:#cb52e3;
+}
+
+.myButton:active {
+  position:relative;
+  top:1px;
+}
